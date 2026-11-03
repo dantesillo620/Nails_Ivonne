@@ -22,6 +22,8 @@ describe('contacto', () => {
     expect(url).toMatch(/^https:\/\/wa\.me\/525512345678\?text=/);
     const texto = decodeURIComponent(url!.split('text=')[1]);
     expect(texto).toContain('“Vino con dije dorado” (NI-02)');
+    // El enlace a la página del diseño hace que WhatsApp muestre la foto.
+    expect(texto).toContain(`${SITE.url}/disenos/ni-02`);
     expect(texto).not.toMatch(/reservad/i);
   });
 

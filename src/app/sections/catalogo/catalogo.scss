@@ -86,6 +86,7 @@
   }
 
   li {
+    position: relative;
     break-inside: avoid;
     margin-bottom: clamp(1.25rem, 3vw, 2rem);
     /* Los diseños que aparecen (filtro o "ver más") entran suavemente */
@@ -99,6 +100,15 @@
       transform: translateY(10px);
     }
   }
+}
+
+/* Botón "+" para elegir el diseño, en la esquina de la foto */
+app-elegir {
+  display: block;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
 }
 
 .tarjeta {

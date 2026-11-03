@@ -8,8 +8,10 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { SeleccionService } from '../../core/seleccion.service';
 import { SITE } from '../../core/site.config';
 import { CATEGORIAS, CategoriaId, TRABAJOS } from '../../data/trabajos';
+import { Elegir } from '../../shared/elegir/elegir';
 import { Foto } from '../../shared/foto';
 import { LightboxService } from '../../shared/lightbox/lightbox.service';
 import { Reveal } from '../../shared/reveal';
@@ -21,13 +23,14 @@ const PASO = 12;
 
 @Component({
   selector: 'app-catalogo',
-  imports: [Foto, Reveal],
+  imports: [Foto, Reveal, Elegir],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.scss',
 })
 export class Catalogo {
   private readonly lightbox = inject(LightboxService);
+  protected readonly seleccion = inject(SeleccionService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly injector = inject(Injector);
 

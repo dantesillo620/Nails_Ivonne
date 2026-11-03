@@ -43,20 +43,35 @@ export interface SiteConfig {
     mapsUrl: string;
     horarios: Horario[];
   };
+  /**
+   * Agenda de la página. No es un sistema de reservas: la clienta elige día y
+   * hora y se arma un WhatsApp para que Ivonne confirme.
+   */
+  agenda: {
+    /** Días que se atiende: 0 domingo, 1 lunes … 6 sábado. */
+    dias: number[];
+    /** Horas de inicio de cita que se ofrecen, en formato 24 h ('16:00'). */
+    horas: string[];
+    /** Cuántas semanas se muestran. */
+    semanas: number;
+    /** Minutos mínimos de anticipación para ofrecer una hora del mismo día. */
+    anticipacionMinutos: number;
+  };
   textos: {
     hero: { etiqueta: string; titulo: string; tituloEnfasis: string; texto: string };
     destacados: { titulo: string; texto: string };
-    catalogo: { titulo: string; texto: string };
+    catalogo: { titulo: string; texto: string; textoElegir: string };
     experiencia: {
       titulo: string;
       texto: string;
       puntos: { titulo: string; texto: string }[];
     };
+    agenda: { titulo: string; texto: string; aviso: string };
     contacto: { titulo: string; texto: string; textoSinWhatsapp: string };
     whatsapp: {
       /** Mensaje general para consultar una cita. */
       consulta: string;
-      /** Mensaje para un diseño; {titulo} y {id} se reemplazan. */
+      /** Mensaje para un diseño; {titulo}, {id} y {url} se reemplazan. */
       diseno: string;
     };
   };
@@ -73,7 +88,7 @@ export const SITE: SiteConfig = {
   defaultImage: '/brand/og-nails-ivonne.jpg',
 
   contacto: {
-    whatsapp: '', // TODO
+    whatsapp: '523855221123',
     instagram: '', // TODO
     direccion: {
       calle: '', // TODO
@@ -84,7 +99,17 @@ export const SITE: SiteConfig = {
       pais: 'MX',
     },
     mapsUrl: '',
-    horarios: [], // TODO: [{ dias: 'Lunes a viernes', horas: '10:00 – 19:00', schema: 'Mo-Fr 10:00-19:00' }]
+    horarios: [
+      { dias: 'Lunes a sábado', horas: '4:00 a 8:00 p. m.', schema: 'Mo-Sa 16:00-20:00' },
+      { dias: 'Domingo', horas: 'Cerrado' },
+    ],
+  },
+
+  agenda: {
+    dias: [1, 2, 3, 4, 5, 6],
+    horas: ['16:00', '18:00'],
+    semanas: 2,
+    anticipacionMinutos: 60,
   },
 
   textos: {
@@ -102,6 +127,7 @@ export const SITE: SiteConfig = {
     catalogo: {
       titulo: 'Catálogo de diseños',
       texto: 'Todos los trabajos son reales. Toca cualquier foto para verla en grande.',
+      textoElegir: 'Con el + guardas los que te gusten y se agregan a tu solicitud de cita.',
     },
     experiencia: {
       titulo: 'Cada detalle, pensado para ti',
@@ -122,17 +148,24 @@ export const SITE: SiteConfig = {
         },
       ],
     },
+    agenda: {
+      titulo: 'Agenda tu cita',
+      texto:
+        'Elige el día y la hora que te acomodan y, si quieres, los diseños que te gustaron. Se arma un mensaje de WhatsApp para Ivonne con todo listo.',
+      aviso:
+        'Es una solicitud: Ivonne te responde por WhatsApp para confirmar si el horario está libre.',
+    },
     contacto: {
       titulo: 'Tu próximo diseño empieza aquí',
       texto:
-        'Cuéntanos qué te gustaría y te compartimos disponibilidad. Si viste un diseño en el catálogo, menciónalo en tu mensaje.',
+        '¿Tienes una idea especial o alguna duda? Escríbele directo a Ivonne. Si ya sabes qué día te acomoda, usa la agenda.',
       textoSinWhatsapp:
         'Explora el catálogo, guarda los diseños que más te gusten y compártelos al consultar tu cita.',
     },
     whatsapp: {
       consulta: 'Hola, Ivonne. Me gustaría consultar disponibilidad para una cita de uñas.',
       diseno:
-        'Hola, Ivonne. Vi el diseño “{titulo}” ({id}) en tu página y me gustaría algo similar. ¿Me compartes información para una cita?',
+        'Hola, Ivonne. Vi el diseño “{titulo}” ({id}) en tu página y me gustaría algo similar. ¿Me compartes información para una cita?\n{url}',
     },
   },
 };

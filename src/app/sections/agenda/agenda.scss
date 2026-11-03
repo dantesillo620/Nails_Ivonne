@@ -1,0 +1,417 @@
+/* Sección oscura: separa la reserva del catálogo y le da peso al paso final */
+.agenda {
+  --texto-suave: color-mix(in srgb, var(--marfil) 74%, transparent);
+  --borde: color-mix(in srgb, var(--marfil) 22%, transparent);
+
+  background: var(--ciruela);
+  color: var(--marfil);
+
+  :focus-visible {
+    outline-color: var(--rosa);
+  }
+}
+
+.etiqueta {
+  color: var(--rosa);
+}
+
+.texto-seccion {
+  color: var(--texto-suave);
+}
+
+.horario {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  margin: 1.75rem 0 0;
+
+  div {
+    display: flex;
+    gap: 0.6rem;
+    align-items: baseline;
+  }
+
+  dt {
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--dorado-claro);
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+/* ---------- Formulario ---------- */
+
+.formulario {
+  display: grid;
+  gap: 2.5rem;
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+
+  @media (min-width: 960px) {
+    grid-template-columns: 1.15fr 1fr;
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+  }
+}
+
+.columna {
+  display: grid;
+  align-content: start;
+  gap: 2.5rem;
+  min-width: 0;
+}
+
+.paso {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  legend {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0;
+    margin-bottom: 1rem;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    line-height: 1.2;
+  }
+}
+
+.num {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--dorado);
+  border-radius: 50%;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--dorado-claro);
+}
+
+.opcional {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+.semana {
+  margin: 1.25rem 0 0.6rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  color: var(--texto-suave);
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+}
+
+.dias {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(0.3rem, 1vw, 0.6rem);
+}
+
+/* Día y hora: radios nativos (teclado con flechas) con apariencia de botón */
+.dia,
+.hora {
+  position: relative;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease,
+    transform 160ms var(--ease-out);
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:has(input:focus-visible) {
+    outline: 2px solid var(--rosa);
+    outline-offset: 2px;
+  }
+
+  &.elegido {
+    border-color: var(--rosa);
+    background: var(--rosa);
+    color: var(--ciruela);
+  }
+
+  &:has(input:disabled) {
+    cursor: not-allowed;
+    color: color-mix(in srgb, var(--marfil) 32%, transparent);
+    border-style: dashed;
+    border-color: color-mix(in srgb, var(--marfil) 12%, transparent);
+    transform: none;
+  }
+}
+
+.dia {
+  display: grid;
+  justify-items: center;
+  gap: 0.1rem;
+  padding: 0.6rem 0.15rem;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.dsem,
+.dmes {
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.dnum {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 500;
+  font-variant-numeric: lining-nums;
+  line-height: 1;
+}
+
+.nota-dias,
+.cargando,
+.ayuda {
+  margin-top: 0.85rem;
+  font-size: 0.88rem;
+  color: var(--texto-suave);
+}
+
+.horas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  gap: 0.6rem;
+}
+
+.hora {
+  display: grid;
+  place-items: center;
+  min-height: 52px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.paso:disabled .hora {
+  opacity: 0.7;
+}
+
+/* ---------- Diseños elegidos ---------- */
+
+.elegidos {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.4rem;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    transition:
+      opacity 250ms var(--ease-out),
+      transform 250ms var(--ease-out);
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+
+  img {
+    width: 56px;
+    height: 56px;
+    border-radius: 2px;
+    object-fit: cover;
+  }
+}
+
+.nombre-diseno {
+  display: grid;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-style: italic;
+  line-height: 1.2;
+
+  .id {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-style: normal;
+    letter-spacing: 0.12em;
+    color: var(--texto-suave);
+  }
+}
+
+.quitar {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--marfil);
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    transform 160ms var(--ease-out);
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+}
+
+.mas {
+  display: inline-grid;
+  place-items: center;
+  width: 1.4em;
+  height: 1.4em;
+  border-radius: 50%;
+  background: var(--marfil);
+  color: var(--vino);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.enlace {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 0.4rem;
+  color: var(--rosa);
+  font-size: 0.92rem;
+  text-underline-offset: 0.3em;
+}
+
+/* ---------- Datos y envío ---------- */
+
+.datos {
+  display: grid;
+  gap: 0.45rem;
+
+  label {
+    font-size: 0.9rem;
+  }
+
+  label:not(:first-child) {
+    margin-top: 0.9rem;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    background: var(--ciruela-2);
+    color: var(--marfil);
+    font: inherit;
+    font-size: 1rem; /* evita el zoom automático de iOS */
+    transition: border-color 200ms ease;
+
+    &:focus {
+      border-color: var(--rosa);
+      outline: none;
+    }
+    &:focus-visible {
+      outline: 2px solid var(--rosa);
+      outline-offset: 1px;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+.envio {
+  display: grid;
+  gap: 1rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--borde);
+}
+
+.resumen {
+  display: grid;
+  gap: 0.15rem;
+  color: var(--texto-suave);
+}
+
+.resumen-etiqueta {
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dorado-claro);
+}
+
+.resumen-valor {
+  font-family: var(--font-display);
+  font-variant-numeric: lining-nums;
+  font-size: 1.5rem;
+  color: var(--marfil);
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.enviar {
+  width: 100%;
+}
+
+.error {
+  font-size: 0.9rem;
+  color: var(--rosa);
+}
+
+.aviso {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dia:not(.elegido):not(:has(input:disabled)):hover,
+  .hora:not(.elegido):not(:has(input:disabled)):hover {
+    border-color: var(--rosa);
+    background: color-mix(in srgb, var(--rosa) 12%, transparent);
+  }
+  .quitar:hover {
+    background: color-mix(in srgb, var(--marfil) 12%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .elegidos li {
+    transition: opacity 200ms ease;
+
+    @starting-style {
+      transform: none;
+    }
+  }
+}

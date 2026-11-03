@@ -51,11 +51,22 @@
         </p>
         <h2 id="lightbox-titulo">{{ t.titulo }}</h2>
       </div>
-      @if (whatsapp(); as wa) {
-        <a class="btn btn-claro" [href]="wa" target="_blank" rel="noopener">
-          Quiero algo similar
-          <span class="sr-only">(abre WhatsApp)</span>
-        </a>
+      @if (seleccion.activa) {
+        <div class="acciones">
+          <app-elegir [trabajo]="t" variante="boton" />
+          @if (whatsapp(); as wa) {
+            <a class="btn btn-claro" [href]="wa" target="_blank" rel="noopener">
+              Quiero algo similar
+              <span class="sr-only">(abre WhatsApp)</span>
+            </a>
+          }
+        </div>
+        <p class="estado" aria-live="polite">
+          @if (seleccion.cantidad(); as n) {
+            {{ n === 1 ? '1 diseño elegido.' : n + ' diseños elegidos.' }}
+            <a routerLink="/" fragment="agenda" (click)="cerrar()">Ir a agendar</a>
+          }
+        </p>
       }
     </div>
   }

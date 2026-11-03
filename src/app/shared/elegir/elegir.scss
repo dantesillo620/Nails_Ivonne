@@ -1,0 +1,111 @@
+:host {
+  display: contents;
+}
+
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease,
+    transform 160ms var(--ease-out);
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* El "+" se convierte en palomita al elegir */
+.mas,
+.check {
+  transition:
+    opacity 150ms ease,
+    stroke-dashoffset 250ms var(--ease-out);
+}
+
+.check {
+  opacity: 0;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.elegido {
+  .mas {
+    opacity: 0;
+  }
+  .check {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------- Círculo sobre la foto ---------- */
+
+.icono {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--vino) 18%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--marfil) 92%, transparent);
+  color: var(--vino);
+  box-shadow: 0 2px 10px rgb(44 12 25 / 0.12);
+
+  &.elegido {
+    border-color: var(--vino);
+    background: var(--vino);
+    color: var(--marfil);
+  }
+}
+
+/* ---------- Botón con texto (visor y página del diseño) ---------- */
+
+.boton {
+  gap: 0.6rem;
+  min-height: 48px;
+  padding: 0.75rem 1.4rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+
+  &.elegido {
+    border-color: var(--rosa);
+    background: var(--rosa);
+    color: var(--ciruela);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .icono:not(.elegido):hover {
+    background: var(--rosa-claro);
+  }
+  .boton:not(.elegido):hover {
+    background: color-mix(in srgb, var(--rosa) 25%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .check {
+    transition: opacity 150ms ease;
+  }
+}

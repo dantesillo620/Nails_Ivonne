@@ -7,6 +7,9 @@
  *     (crea public/images/trabajos/web/ni-37-<ancho>.webp e imprime la línea para este archivo).
  *  3. Pega la línea en TRABAJOS, en la posición donde quieras que aparezca.
  *
+ * Cada diseño tiene su página (/disenos/ni-37) con una copia JPEG en
+ * public/images/trabajos/og/ para que WhatsApp muestre la foto al compartir el enlace.
+ *
  * Los originales no se publican (ver "ignore" en angular.json): el sitio usa las copias WebP.
  */
 
@@ -88,6 +91,24 @@ export const TRABAJOS: readonly Trabajo[] = [
   { id: 'NI-17', titulo: 'Francés amarillo y rosa', categoria: 'arte', alt: 'Uñas cuadradas con puntas francesas en amarillo pastel y rosa.', imagen: foto('ni-17', 2066, 3672, [480, 960, 1440]) },
   { id: 'NI-07', titulo: 'Rosa con puntos blancos', categoria: 'arte', alt: 'Uñas almendradas en rosa pálido; dos de ellas con pequeños puntos blancos.', imagen: foto('ni-07', 3840, 5120, [480, 960, 1440]) },
 ];
+
+/** Ruta de la página de un diseño: 'NI-25' -> '/disenos/ni-25'. */
+export function rutaDiseno(id: string): string {
+  return `/disenos/${id.toLowerCase()}`;
+}
+
+/** Imagen JPEG de cada diseño para la vista previa en WhatsApp y redes. */
+export function imagenCompartir(t: Trabajo): { src: string; width: number; height: number } {
+  const width = Math.min(800, t.imagen.width);
+  const height = Math.round((t.imagen.height * width) / t.imagen.width);
+  return { src: `/images/trabajos/og/${t.id.toLowerCase()}.jpg`, width, height };
+}
+
+/** Busca un diseño por id sin importar mayúsculas ('ni-25' o 'NI-25'). */
+export function buscarTrabajo(id: string | null | undefined): Trabajo | undefined {
+  const clave = id?.toUpperCase();
+  return TRABAJOS.find((t) => t.id === clave);
+}
 
 /** Foto principal y secundaria de la portada. */
 export const PORTADA = {

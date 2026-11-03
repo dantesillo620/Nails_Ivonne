@@ -7,8 +7,11 @@ import {
   inject,
   viewChild,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { whatsappDisenoUrl } from '../../core/contacto';
+import { SeleccionService } from '../../core/seleccion.service';
 import { CATEGORIAS } from '../../data/trabajos';
+import { Elegir } from '../elegir/elegir';
 import { LightboxService } from './lightbox.service';
 
 /**
@@ -18,12 +21,14 @@ import { LightboxService } from './lightbox.service';
  */
 @Component({
   selector: 'app-lightbox',
+  imports: [RouterLink, Elegir],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './lightbox.html',
   styleUrl: './lightbox.scss',
 })
 export class Lightbox {
   private readonly lb = inject(LightboxService);
+  protected readonly seleccion = inject(SeleccionService);
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
 
   protected readonly trabajo = this.lb.actual;

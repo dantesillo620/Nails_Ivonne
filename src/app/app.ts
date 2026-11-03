@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, afterNextRender, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { SeleccionService } from './core/seleccion.service';
+import { BarraSeleccion } from './layout/barra-seleccion/barra-seleccion';
 import { SiteFooter } from './layout/site-footer/site-footer';
 import { SiteHeader } from './layout/site-header/site-header';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SiteHeader, SiteFooter],
+  imports: [RouterOutlet, SiteHeader, SiteFooter, BarraSeleccion],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-site-header />
@@ -13,6 +15,7 @@ import { SiteHeader } from './layout/site-header/site-header';
       <router-outlet />
     </main>
     <app-site-footer />
+    <app-barra-seleccion />
   `,
   styles: `
     :host {
@@ -28,4 +31,9 @@ import { SiteHeader } from './layout/site-header/site-header';
     }
   `,
 })
-export class App {}
+export class App {
+  constructor() {
+    const seleccion = inject(SeleccionService);
+    afterNextRender(() => seleccion.restaurar());
+  }
+}

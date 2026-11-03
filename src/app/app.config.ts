@@ -9,6 +9,7 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import {
   TitleStrategy,
   provideRouter,
+  withComponentInputBinding,
   withInMemoryScrolling,
   withRouterConfig,
 } from '@angular/router';
@@ -26,6 +27,7 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' }),
       // Volver a pulsar el mismo enlace de sección vuelve a desplazarse hasta ella.
       withRouterConfig({ onSameUrlNavigation: 'reload' }),
+      withComponentInputBinding(),
     ),
     provideAppInitializer(() => inject(ViewportScroller).setOffset([0, ALTO_ENCABEZADO])),
     { provide: TitleStrategy, useClass: SeoTitleStrategy },

@@ -1,3 +1,4 @@
+import { rutaDiseno } from '../data/trabajos';
 import { SITE } from './site.config';
 
 /** Número de WhatsApp válido (8 a 15 dígitos internacionales) o null. */
@@ -12,9 +13,17 @@ export function whatsappUrl(mensaje: string = SITE.textos.whatsapp.consulta): st
   return numero ? `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}` : null;
 }
 
+/** Dirección pública de la página de un diseño (WhatsApp muestra su foto). */
+export function urlDiseno(id: string): string {
+  return SITE.url + rutaDiseno(id);
+}
+
 /** Enlace de WhatsApp para pedir un diseño similar al del catálogo. */
 export function whatsappDisenoUrl(titulo: string, id: string): string | null {
-  const mensaje = SITE.textos.whatsapp.diseno.replace('{titulo}', titulo).replace('{id}', id);
+  const mensaje = SITE.textos.whatsapp.diseno
+    .replace('{titulo}', titulo)
+    .replace('{id}', id)
+    .replace('{url}', urlDiseno(id));
   return whatsappUrl(mensaje);
 }
 

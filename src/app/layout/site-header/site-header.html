@@ -21,11 +21,8 @@
   </nav>
 
   <div class="acciones">
-    @if (whatsapp) {
-      <a class="btn btn-primario cta" [href]="whatsapp" target="_blank" rel="noopener">
-        Consultar cita
-        <span class="sr-only">(abre WhatsApp)</span>
-      </a>
+    @if (agenda) {
+      <a class="btn btn-primario cta" routerLink="/" fragment="agenda">Agendar cita</a>
     } @else {
       <a class="btn btn-primario cta" routerLink="/" fragment="contacto">Contacto</a>
     }
@@ -58,11 +55,8 @@
       </li>
     }
     <li class="menu-cta" [style.--i]="nav.length">
-      @if (whatsapp) {
-        <a class="btn btn-primario" [href]="whatsapp" target="_blank" rel="noopener" (click)="cerrarMenu()">
-          Consultar cita
-          <span class="sr-only">(abre WhatsApp)</span>
-        </a>
+      @if (agenda) {
+        <a class="btn btn-primario" routerLink="/" fragment="agenda" (click)="cerrarMenu()">Agendar cita</a>
       } @else {
         <a class="btn btn-secundario" routerLink="/" fragment="trabajos" (click)="cerrarMenu()">
           Explorar diseños

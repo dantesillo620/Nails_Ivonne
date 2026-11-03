@@ -2,6 +2,7 @@
 export const NAV = [
   { fragment: 'inicio', label: 'Inicio' },
   { fragment: 'trabajos', label: 'Trabajos' },
+  { fragment: 'agenda', label: 'Agenda' },
   { fragment: 'experiencia', label: 'Experiencia' },
   { fragment: 'contacto', label: 'Contacto' },
 ] as const;

@@ -2,7 +2,12 @@
   <div class="contenedor">
     <header class="encabezado" appReveal>
       <h2 id="catalogo-titulo" class="titulo-seccion">{{ textos.titulo }}</h2>
-      <p class="texto-seccion">{{ textos.texto }}</p>
+      <p class="texto-seccion">
+        {{ textos.texto }}
+        @if (seleccion.activa) {
+          {{ textos.textoElegir }}
+        }
+      </p>
     </header>
 
     <div class="filtros" role="group" aria-label="Filtrar diseños por estilo" appReveal>
@@ -44,6 +49,7 @@
               <span class="id">{{ t.id }}</span>
             </span>
           </button>
+          <app-elegir class="elegir" [trabajo]="t" />
         </li>
       }
     </ul>

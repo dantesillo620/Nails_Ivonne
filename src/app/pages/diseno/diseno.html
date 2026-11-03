@@ -1,0 +1,81 @@
+@let t = trabajo();
+
+<article class="diseno contenedor" aria-labelledby="diseno-titulo">
+  <nav class="migas" aria-label="Ruta de navegación">
+    <ol>
+      <li><a routerLink="/">Inicio</a></li>
+      <li><a routerLink="/" fragment="catalogo">Catálogo</a></li>
+      <li aria-current="page">{{ t.id }}</li>
+    </ol>
+  </nav>
+
+  <div class="rejilla">
+    <figure class="foto">
+      <img
+        [src]="src()"
+        [attr.srcset]="srcset()"
+        sizes="(min-width: 960px) 52vw, 100vw"
+        [width]="t.imagen.width"
+        [height]="t.imagen.height"
+        [alt]="t.alt"
+        fetchpriority="high"
+      />
+    </figure>
+
+    <div class="info">
+      <p class="etiqueta">
+        {{ t.id }}
+        @if (categoria(); as c) {
+          <span aria-hidden="true">·</span> {{ c }}
+        }
+      </p>
+      <h1 id="diseno-titulo" class="titulo-seccion">{{ t.titulo }}</h1>
+      <p class="descripcion">{{ t.alt }}</p>
+      <p class="real">Trabajo real de Nails Ivonne. Si te gusta, elígelo para tu cita y platica con Ivonne los detalles.</p>
+
+      @if (seleccion.activa) {
+        <div class="acciones">
+          <app-elegir [trabajo]="t" variante="boton" />
+          <a class="btn btn-primario" routerLink="/" fragment="agenda">
+            Agendar cita
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+        </div>
+        <p class="estado" aria-live="polite">
+          @if (elegido()) {
+            Guardado en tu selección. Lo verás en la agenda.
+          }
+        </p>
+        @if (whatsapp(); as wa) {
+          <a class="enlace-flecha" [href]="wa" target="_blank" rel="noopener">
+            Preguntar por este diseño en WhatsApp
+            <span class="sr-only">(abre WhatsApp)</span>
+          </a>
+        }
+      } @else {
+        <div class="acciones">
+          <a class="btn btn-primario" routerLink="/" fragment="catalogo">Ver el catálogo</a>
+        </div>
+      }
+    </div>
+  </div>
+
+  <nav class="vecinos" aria-label="Más diseños">
+    <a [routerLink]="ruta(vecinos().anterior.id)" class="vecino">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+      <span>
+        <span class="vecino-etiqueta">Anterior</span>
+        {{ vecinos().anterior.titulo }}
+      </span>
+    </a>
+    <a [routerLink]="ruta(vecinos().siguiente.id)" class="vecino siguiente">
+      <span>
+        <span class="vecino-etiqueta">Siguiente</span>
+        {{ vecinos().siguiente.titulo }}
+      </span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+    </a>
+  </nav>
+</article>

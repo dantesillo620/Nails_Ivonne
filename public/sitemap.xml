@@ -1,5 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO: actualizar el dominio y agregar aquí cada ruta pública nueva -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://nails-ivonne.vercel.app/</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-02</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-25</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-32</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-14</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-35</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-29</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-05</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-21</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-12</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-13</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-36</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-06</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-26</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-18</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-08</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-10</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-34</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-11</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-04</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-20</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-03</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-23</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-33</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-01</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-31</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-27</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-09</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-28</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-19</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-30</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-16</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-22</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-24</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-15</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-17</loc></url>
+  <url><loc>https://nails-ivonne.vercel.app/disenos/ni-07</loc></url>
 </urlset>

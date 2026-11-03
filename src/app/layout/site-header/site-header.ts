@@ -9,7 +9,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { whatsappUrl } from '../../core/contacto';
+import { whatsappNumero } from '../../core/contacto';
 import { NAV } from '../nav';
 
 @Component({
@@ -25,8 +25,9 @@ import { NAV } from '../nav';
   },
 })
 export class SiteHeader {
-  protected readonly nav = NAV;
-  protected readonly whatsapp = whatsappUrl();
+  /** La agenda solo existe si hay WhatsApp para enviar la solicitud. */
+  protected readonly agenda = whatsappNumero() !== null;
+  protected readonly nav = NAV.filter((item) => item.fragment !== 'agenda' || this.agenda);
   protected readonly menuAbierto = signal(false);
   /** El encabezado gana fondo al bajar, para separarse del contenido. */
   protected readonly conFondo = signal(false);

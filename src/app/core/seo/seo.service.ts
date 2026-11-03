@@ -10,6 +10,10 @@ export interface SeoData {
   image?: string;
   /** `true` para que la página no se indexe (p. ej. la 404). */
   noindex?: boolean;
+  /** Medidas y texto alternativo de `image` (ayudan a WhatsApp y Facebook a mostrarla). */
+  imageWidth?: number;
+  imageHeight?: number;
+  imageAlt?: string;
   /** Tipo Open Graph; por defecto `website`. */
   type?: string;
 }
@@ -25,6 +29,10 @@ export class SeoService {
     const description = seo.description ?? SITE.defaultDescription;
     const url = this.absoluteUrl(path);
     const image = this.absoluteUrl(seo.image ?? SITE.defaultImage);
+    // Sin imagen propia se usa la de la marca (1200×630).
+    const dims = seo.image
+      ? { w: seo.imageWidth, h: seo.imageHeight, alt: seo.imageAlt }
+      : { w: 1200, h: 630, alt: SITE.name };
 
     this.title.setTitle(pageTitle);
     this.setName('description', description);
@@ -37,6 +45,9 @@ export class SeoService {
     this.setProperty('og:description', description);
     this.setProperty('og:url', url);
     this.setProperty('og:image', image);
+    this.setOptionalProperty('og:image:width', dims.w?.toString());
+    this.setOptionalProperty('og:image:height', dims.h?.toString());
+    this.setOptionalProperty('og:image:alt', dims.alt);
 
     this.setName('twitter:card', 'summary_large_image');
     this.setName('twitter:title', pageTitle);
@@ -66,6 +77,11 @@ export class SeoService {
 
   private setProperty(property: string, content: string): void {
     this.meta.updateTag({ property, content });
+  }
+
+  private setOptionalProperty(property: string, content: string | undefined): void {
+    if (content) this.meta.updateTag({ property, content });
+    else this.meta.removeTag(`property="${property}"`);
   }
 
   private setCanonical(url: string): void {

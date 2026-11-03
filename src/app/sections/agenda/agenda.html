@@ -1,0 +1,175 @@
+<section id="agenda" class="agenda seccion" aria-labelledby="agenda-titulo">
+  <div class="contenedor">
+    <header class="encabezado" appReveal>
+      <p class="etiqueta">Agenda</p>
+      <h2 id="agenda-titulo" class="titulo-seccion">{{ textos.titulo }}</h2>
+      <p class="texto-seccion">{{ textos.texto }}</p>
+
+      @if (horario.length) {
+        <dl class="horario">
+          @for (h of horario; track h.dias) {
+            <div>
+              <dt>{{ h.dias }}</dt>
+              <dd>{{ h.horas }}</dd>
+            </div>
+          }
+        </dl>
+      }
+    </header>
+
+    <form class="formulario" (submit)="faltaDato($event)" novalidate>
+      <div class="columna">
+        <fieldset class="paso">
+          <legend><span class="num" aria-hidden="true">1</span> Elige el día</legend>
+
+          @if (semanas().length) {
+            @for (s of semanas(); track s.titulo) {
+              <p class="semana">Semana del {{ s.titulo }}</p>
+              <div class="dias">
+                @for (d of s.dias; track d.clave) {
+                  <label class="dia" [class.elegido]="dia()?.clave === d.clave">
+                    <input
+                      type="radio"
+                      name="dia"
+                      class="sr-only"
+                      [value]="d.clave"
+                      [checked]="dia()?.clave === d.clave"
+                      [disabled]="!d.horas.length"
+                      (change)="elegirDia(d)"
+                    />
+                    <span class="dsem">{{ diaSemana(d.fecha) }}</span>
+                    <span class="dnum">{{ d.fecha.getDate() }}</span>
+                    <span class="dmes">{{ mes(d.fecha) }}</span>
+                    @if (!d.horas.length) {
+                      <span class="sr-only">(sin horarios)</span>
+                    }
+                  </label>
+                }
+              </div>
+            }
+            <p class="nota-dias">Domingo no se trabaja.</p>
+          } @else {
+            <p class="cargando">Cargando los próximos días…</p>
+          }
+        </fieldset>
+
+        <fieldset class="paso" [disabled]="!dia()">
+          <legend><span class="num" aria-hidden="true">2</span> Elige la hora</legend>
+          <div class="horas">
+            @for (h of horas; track h) {
+              <label class="hora" [class.elegido]="hora() === h">
+                <input
+                  type="radio"
+                  name="hora"
+                  class="sr-only"
+                  [value]="h"
+                  [checked]="hora() === h"
+                  [disabled]="!dia()?.horas?.includes(h)"
+                  (change)="elegirHora(h)"
+                />
+                {{ formatoHora(h) }}
+              </label>
+            }
+          </div>
+          @if (!dia()) {
+            <p class="ayuda">Primero elige un día.</p>
+          }
+        </fieldset>
+      </div>
+
+      <div class="columna">
+        <fieldset class="paso">
+          <legend>
+            <span class="num" aria-hidden="true">3</span> Tu diseño
+            <span class="opcional">(opcional)</span>
+          </legend>
+
+          @if (seleccion.trabajos().length) {
+            <ul class="elegidos">
+              @for (t of seleccion.trabajos(); track t.id) {
+                <li>
+                  <img [src]="t.imagen.base + '-480.webp'" alt="" width="56" height="56" loading="lazy" />
+                  <span class="nombre-diseno">
+                    {{ t.titulo }}
+                    <span class="id">{{ t.id }}</span>
+                  </span>
+                  <button
+                    type="button"
+                    class="quitar"
+                    (click)="seleccion.quitar(t.id)"
+                    [attr.aria-label]="'Quitar ' + t.titulo + ', ' + t.id"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" /></svg>
+                  </button>
+                </li>
+              }
+            </ul>
+            <a class="enlace" routerLink="/" fragment="catalogo">Elegir otro diseño</a>
+          } @else {
+            <p class="ayuda">
+              Toca el <span class="mas" aria-hidden="true">+</span><span class="sr-only">botón Elegir</span>
+              en las fotos del catálogo para agregarlas aquí, o cuéntale tu idea a Ivonne en los comentarios.
+            </p>
+            <a class="enlace" routerLink="/" fragment="catalogo">Ver el catálogo</a>
+          }
+        </fieldset>
+
+        <div class="paso datos">
+          <label for="agenda-nombre">Tu nombre <span class="opcional">(opcional)</span></label>
+          <input
+            id="agenda-nombre"
+            type="text"
+            autocomplete="given-name"
+            maxlength="60"
+            [value]="nombre()"
+            (input)="escribir('nombre', $event)"
+          />
+
+          <label for="agenda-nota">Comentarios <span class="opcional">(opcional)</span></label>
+          <textarea
+            id="agenda-nota"
+            rows="3"
+            maxlength="400"
+            [value]="nota()"
+            (input)="escribir('nota', $event)"
+          ></textarea>
+        </div>
+
+        <div class="envio">
+          <p class="resumen" aria-live="polite">
+            @if (resumen(); as r) {
+              <span class="resumen-etiqueta">Tu solicitud</span>
+              <span class="resumen-valor">{{ r }}</span>
+            } @else {
+              Elige día y hora para armar tu mensaje.
+            }
+          </p>
+
+          @if (url(); as u) {
+            <a class="btn btn-claro enviar" [href]="u" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <path d="M4.5 19.5l1.1-3.6A8 8 0 1 1 8.4 18.6z" stroke-linejoin="round" />
+              </svg>
+              Enviar solicitud por WhatsApp
+              <span class="sr-only">(abre WhatsApp)</span>
+            </a>
+          } @else {
+            <button type="submit" class="btn btn-claro enviar" [attr.aria-describedby]="error() ? 'agenda-error' : null">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <path d="M4.5 19.5l1.1-3.6A8 8 0 1 1 8.4 18.6z" stroke-linejoin="round" />
+              </svg>
+              Enviar solicitud por WhatsApp
+            </button>
+            @if (error()) {
+              <p id="agenda-error" class="error" role="alert">
+                {{ dia() ? 'Elige una hora para continuar.' : 'Elige un día y una hora para continuar.' }}
+              </p>
+            }
+          }
+
+          <p class="aviso">{{ textos.aviso }}</p>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

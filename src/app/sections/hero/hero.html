@@ -16,11 +16,8 @@
             <path d="M12 5v14M6 13l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </a>
-        @if (whatsapp) {
-          <a class="btn btn-secundario" [href]="whatsapp" target="_blank" rel="noopener">
-            Consultar cita
-            <span class="sr-only">(abre WhatsApp)</span>
-          </a>
+        @if (agenda) {
+          <a class="btn btn-secundario" routerLink="/" fragment="agenda">Agendar cita</a>
         }
       </div>
     </div>

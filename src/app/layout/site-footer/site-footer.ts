@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { instagramUrl, instagramUsuario, whatsappUrl } from '../../core/contacto';
 import { SITE } from '../../core/site.config';
 import { NAV } from '../nav';
+import { whatsappNumero } from '../../core/contacto';
 
 @Component({
   selector: 'app-site-footer',
@@ -12,7 +13,7 @@ import { NAV } from '../nav';
   styleUrl: './site-footer.scss',
 })
 export class SiteFooter {
-  protected readonly nav = NAV;
+  protected readonly nav = NAV.filter((item) => item.fragment !== 'agenda' || whatsappNumero() !== null);
   protected readonly nombre = SITE.name;
   protected readonly anio = new Date().getFullYear();
   protected readonly whatsapp = whatsappUrl();

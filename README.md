@@ -15,7 +15,7 @@ hosting (Hostinger, Apache).
 | `npm start` | Servidor de desarrollo en http://localhost:4200 |
 | `npm run build` | Genera el sitio en `dist/nails-ivonne/browser` |
 | `npx ng test` | Ejecuta las pruebas |
-| `npm run fotos -- "<archivo>" ni-37` | Genera las copias WebP de una foto nueva (macOS) |
+| `npm run fotos -- "<archivo>" ni-37` | Genera las copias WebP y la vista previa JPEG de una foto nueva (macOS) |
 
 ## Datos del negocio y textos
 
@@ -25,16 +25,32 @@ Todo está en **`src/app/core/site.config.ts`**:
   Mientras esté vacío no se muestra ningún enlace de WhatsApp.
 - `contacto.instagram`: usuario sin `@`.
 - `contacto.direccion`, `contacto.mapsUrl`, `contacto.horarios`: se muestran solo si se llenan.
+- `agenda`: días que se atiende (`0` domingo … `6` sábado), horas de inicio de cita,
+  semanas visibles y anticipación mínima para el mismo día.
 - `textos`: titulares y textos de cada sección y los mensajes de WhatsApp.
-- `url`: dominio definitivo (también en `public/robots.txt` y `public/sitemap.xml`).
+- `url`: dominio definitivo (también en `public/robots.txt`; `public/sitemap.xml` se genera
+  al compilar). Los enlaces que llegan por WhatsApp usan este dominio.
+
+## Agenda y selección de diseños
+
+- En el catálogo, el visor y la página de cada diseño hay un botón **+ / Elegir para mi
+  cita**. Lo elegido se guarda en el navegador de la clienta y aparece en la sección **Agenda**.
+- En la agenda elige día (lunes a sábado), hora y, si quiere, nombre y comentarios. El botón
+  abre WhatsApp con el mensaje armado para Ivonne. **No reserva nada**: Ivonne confirma por
+  mensaje. La página no sabe qué horas están ocupadas.
+- WhatsApp no permite adjuntar fotos desde un enlace, así que el mensaje incluye la dirección
+  de cada diseño (`/disenos/ni-25`). WhatsApp muestra la foto como vista previa del enlace.
+- Si `contacto.whatsapp` queda vacío, la agenda y los botones de elegir se ocultan.
 
 ## Agregar fotos al catálogo
 
 1. Copia el original a `public/images/trabajos/` (los originales no se publican).
 2. Ejecuta `npm run fotos -- "public/images/trabajos/<archivo>" ni-37` (requiere
    `brew install webp`). Crea las versiones en `public/images/trabajos/web/`.
+   También crea la vista previa para WhatsApp en `public/images/trabajos/og/`.
 3. Pega la línea que imprime en `TRABAJOS` (`src/app/data/trabajos.ts`) y completa
    título, categoría (`clasicos`, `brillo` o `arte`) y un texto alternativo que describa la foto.
+   Su página `/disenos/ni-37` y su entrada en `sitemap.xml` se generan solas al compilar.
 4. Para mostrarla en destacados, agrega `destacado: true`.
 
 El orden del arreglo `TRABAJOS` es el orden del catálogo. La foto de portada y la de
@@ -63,9 +79,9 @@ src/app/
   core/          configuración, enlaces de contacto y SEO
   data/          catálogo de trabajos
   layout/        encabezado (con menú móvil) y pie de página
-  sections/      portada, destacados, catálogo, experiencia, contacto
+  sections/      portada, destacados, catálogo, agenda, experiencia, contacto
   shared/        imagen responsiva, aparición al hacer scroll, visor de fotos
-  pages/         inicio y 404
+  pages/         inicio, página de cada diseño y 404
 ```
 
 ## Despliegue
