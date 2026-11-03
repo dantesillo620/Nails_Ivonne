@@ -1,0 +1,38 @@
+/* Estilos globales */
+:root {
+  --bg: #fffafb;
+  --text: #2b2024;
+  --muted: #7a6a70;
+  --accent: #c2477a;
+  --border: #f0dfe5;
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+}

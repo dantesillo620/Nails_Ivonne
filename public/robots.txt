@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# TODO: actualizar con el dominio definitivo
+Sitemap: https://nails-ivonne.vercel.app/sitemap.xml

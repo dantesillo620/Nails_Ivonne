@@ -1,0 +1,18 @@
+# Configuración para Apache (Hostinger hosting compartido / MAMP).
+# Sirve las páginas prerenderizadas y manda las rutas desconocidas a la app.
+Options -Indexes
+DirectorySlash Off
+RewriteEngine On
+
+# /servicios/ -> /servicios (una sola URL por página, igual que el canonical)
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.+)/$ /$1 [R=301,L]
+
+# /servicios -> servicios/index.html (página prerenderizada)
+RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
+RewriteRule ^(.+)$ $1/index.html [L]
+
+# Cualquier otra ruta inexistente -> la app Angular (muestra la página 404)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.csr.html [L]

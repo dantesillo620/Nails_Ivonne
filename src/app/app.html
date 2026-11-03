@@ -1,0 +1,21 @@
+<header class="site-header">
+  <a class="brand" routerLink="/">{{ siteName }}</a>
+  <nav aria-label="Principal">
+    @for (item of nav; track item.path) {
+      <a
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.exact }"
+        >{{ item.label }}</a
+      >
+    }
+  </nav>
+</header>
+
+<main>
+  <router-outlet />
+</main>
+
+<footer class="site-footer">
+  <p>© {{ year }} {{ siteName }}</p>
+</footer>
