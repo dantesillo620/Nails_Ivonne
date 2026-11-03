@@ -1,18 +1,24 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { buildBusinessSchema } from '../../core/seo/business-schema';
 import { SeoService } from '../../core/seo/seo.service';
+import { Catalogo } from '../../sections/catalogo/catalogo';
+import { Contacto } from '../../sections/contacto/contacto';
+import { Destacados } from '../../sections/destacados/destacados';
+import { Experiencia } from '../../sections/experiencia/experiencia';
+import { Hero } from '../../sections/hero/hero';
+import { Lightbox } from '../../shared/lightbox/lightbox';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink],
+  imports: [Hero, Destacados, Catalogo, Experiencia, Contacto, Lightbox],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="page">
-      <h1>Nails Ivonne</h1>
-      <p>Uñas hermosas, hechas con detalle.</p>
-      <a routerLink="/contacto">Agenda tu cita</a>
-    </section>
+    <app-hero />
+    <app-destacados />
+    <app-catalogo />
+    <app-experiencia />
+    <app-contacto />
+    <app-lightbox />
   `,
 })
 export default class Home implements OnDestroy {

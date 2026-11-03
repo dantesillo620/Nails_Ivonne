@@ -1,0 +1,71 @@
+.tarjeta {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  max-width: 52rem;
+  margin-inline: auto;
+  padding: clamp(3rem, 8vw, 5.5rem) clamp(1.25rem, 6vw, 5rem);
+  border-radius: 999px 999px var(--radio) var(--radio);
+  background: var(--rosa-claro);
+  text-align: center;
+}
+
+.isotipo {
+  width: 52px;
+  height: auto;
+  margin-bottom: 1.5rem;
+}
+
+.etiqueta::after {
+  content: '';
+  width: 2rem;
+  height: 1px;
+  background: var(--dorado);
+}
+
+.texto {
+  margin-top: 1.25rem;
+  max-width: 32rem;
+  color: var(--tinta-suave);
+}
+
+.botones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2.25rem;
+}
+
+.detalles {
+  display: grid;
+  gap: 1.5rem 3rem;
+  margin: 2.75rem 0 0;
+  padding-top: 2rem;
+  border-top: 1px solid color-mix(in srgb, var(--vino) 15%, transparent);
+
+  @media (min-width: 640px) {
+    grid-auto-flow: column;
+    text-align: left;
+  }
+
+  dt {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--vino);
+  }
+
+  dd {
+    display: grid;
+    gap: 0.15rem;
+    margin: 0.5rem 0 0;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--vino);
+  }
+}

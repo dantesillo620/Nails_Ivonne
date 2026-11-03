@@ -2,8 +2,9 @@ import { Routes } from '@angular/router';
 import { SeoData } from './core/seo/seo.service';
 
 /**
- * Cada ruta define `title` y `data.seo`; SeoTitleStrategy los convierte en
- * <title>, description, canonical, Open Graph y Twitter Card.
+ * El sitio es una sola página con secciones (#inicio, #trabajos, #catalogo,
+ * #experiencia, #contacto). Cada ruta define `title` y `data.seo`;
+ * SeoTitleStrategy los convierte en <title>, description, canonical y Open Graph.
  * Al agregar una ruta pública, agrégala también a public/sitemap.xml.
  */
 export const routes: Routes = [
@@ -13,38 +14,7 @@ export const routes: Routes = [
     data: {
       seo: {
         description:
-          'Nails Ivonne: manicure, pedicure, uñas acrílicas, gel y nail art. Agenda tu cita.',
-      } satisfies SeoData,
-    },
-  },
-  {
-    path: 'servicios',
-    title: 'Servicios',
-    loadComponent: () => import('./pages/servicios/servicios'),
-    data: {
-      seo: {
-        description:
-          'Servicios de uñas en Nails Ivonne: manicure, pedicure, acrílico, gel, rubber y nail art.',
-      } satisfies SeoData,
-    },
-  },
-  {
-    path: 'galeria',
-    title: 'Galería',
-    loadComponent: () => import('./pages/galeria/galeria'),
-    data: {
-      seo: {
-        description: 'Galería de diseños de uñas realizados en Nails Ivonne.',
-      } satisfies SeoData,
-    },
-  },
-  {
-    path: 'contacto',
-    title: 'Contacto',
-    loadComponent: () => import('./pages/contacto/contacto'),
-    data: {
-      seo: {
-        description: 'Contacta a Nails Ivonne y agenda tu cita de uñas.',
+          'Nails Ivonne: diseños de uñas con detalle, desde un nude impecable hasta arte, brillo y dorado. Explora el catálogo de trabajos reales y consulta tu cita.',
       } satisfies SeoData,
     },
   },

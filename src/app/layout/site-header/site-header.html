@@ -1,0 +1,73 @@
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+<div class="barra contenedor">
+  <a class="marca" routerLink="/" fragment="inicio" (click)="cerrarMenu()">
+    <img
+      src="/brand/logo-nails-ivonne.svg"
+      alt="Nails Ivonne, ir al inicio"
+      width="253"
+      height="106"
+    />
+  </a>
+
+  <nav class="nav-escritorio" aria-label="Principal">
+    <ul>
+      @for (item of nav; track item.fragment) {
+        <li>
+          <a routerLink="/" [fragment]="item.fragment">{{ item.label }}</a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <div class="acciones">
+    @if (whatsapp) {
+      <a class="btn btn-primario cta" [href]="whatsapp" target="_blank" rel="noopener">
+        Consultar cita
+        <span class="sr-only">(abre WhatsApp)</span>
+      </a>
+    } @else {
+      <a class="btn btn-primario cta" routerLink="/" fragment="contacto">Contacto</a>
+    }
+
+    <button
+      #botonMenu
+      type="button"
+      class="boton-menu"
+      aria-controls="menu-movil"
+      [attr.aria-expanded]="menuAbierto()"
+      (click)="alternarMenu()"
+    >
+      <span class="sr-only">{{ menuAbierto() ? 'Cerrar menú' : 'Abrir menú' }}</span>
+      <span class="hamburguesa" aria-hidden="true"><span></span><span></span></span>
+    </button>
+  </div>
+</div>
+
+<nav
+  id="menu-movil"
+  class="menu-movil"
+  aria-label="Menú"
+  [class.abierto]="menuAbierto()"
+  [attr.inert]="menuAbierto() ? null : ''"
+>
+  <ul class="contenedor">
+    @for (item of nav; track item.fragment; let i = $index) {
+      <li [style.--i]="i">
+        <a routerLink="/" [fragment]="item.fragment" (click)="cerrarMenu()">{{ item.label }}</a>
+      </li>
+    }
+    <li class="menu-cta" [style.--i]="nav.length">
+      @if (whatsapp) {
+        <a class="btn btn-primario" [href]="whatsapp" target="_blank" rel="noopener" (click)="cerrarMenu()">
+          Consultar cita
+          <span class="sr-only">(abre WhatsApp)</span>
+        </a>
+      } @else {
+        <a class="btn btn-secundario" routerLink="/" fragment="trabajos" (click)="cerrarMenu()">
+          Explorar diseños
+        </a>
+      }
+    </li>
+  </ul>
+</nav>

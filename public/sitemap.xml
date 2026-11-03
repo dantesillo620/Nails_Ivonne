@@ -2,7 +2,4 @@
 <!-- TODO: actualizar el dominio y agregar aquí cada ruta pública nueva -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://nails-ivonne.vercel.app/</loc></url>
-  <url><loc>https://nails-ivonne.vercel.app/servicios</loc></url>
-  <url><loc>https://nails-ivonne.vercel.app/galeria</loc></url>
-  <url><loc>https://nails-ivonne.vercel.app/contacto</loc></url>
 </urlset>

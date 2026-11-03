@@ -1,0 +1,59 @@
+<section id="catalogo" class="catalogo" aria-labelledby="catalogo-titulo">
+  <div class="contenedor">
+    <header class="encabezado" appReveal>
+      <h2 id="catalogo-titulo" class="titulo-seccion">{{ textos.titulo }}</h2>
+      <p class="texto-seccion">{{ textos.texto }}</p>
+    </header>
+
+    <div class="filtros" role="group" aria-label="Filtrar diseños por estilo" appReveal>
+      @for (f of filtros; track f.id) {
+        <button
+          type="button"
+          class="filtro"
+          [class.activo]="filtro() === f.id"
+          [attr.aria-pressed]="filtro() === f.id"
+          (click)="elegir(f.id)"
+        >
+          {{ f.nombre }} <span class="cantidad">{{ f.cantidad }}</span>
+        </button>
+      }
+    </div>
+
+    <p class="estado" aria-live="polite">
+      Mostrando {{ mostrados().length }} de {{ filtrados().length }} diseños
+    </p>
+
+    <ul class="galeria">
+      @for (t of mostrados(); track t.id; let i = $index) {
+        <li [style.--i]="i % 12">
+          <button
+            type="button"
+            class="tarjeta"
+            (click)="abrir(i, $event)"
+            [attr.aria-label]="'Ver en grande: ' + t.titulo + ', ' + t.id"
+          >
+            <span class="marco">
+              <app-foto
+                [imagen]="t.imagen"
+                [alt]="t.alt"
+                sizes="(min-width: 1200px) 290px, (min-width: 720px) 30vw, 50vw"
+              />
+            </span>
+            <span class="pie">
+              <span class="titulo">{{ t.titulo }}</span>
+              <span class="id">{{ t.id }}</span>
+            </span>
+          </button>
+        </li>
+      }
+    </ul>
+
+    @if (quedan() > 0) {
+      <div class="mas">
+        <button type="button" class="btn btn-secundario" (click)="verMas()">
+          Ver más diseños <span class="cantidad">{{ quedan() }}</span>
+        </button>
+      </div>
+    }
+  </div>
+</section>

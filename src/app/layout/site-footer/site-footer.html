@@ -1,0 +1,57 @@
+<footer class="pie">
+  <div class="contenedor rejilla">
+    <div class="identidad">
+      <img
+        src="/brand/logo-nails-ivonne-claro.svg"
+        alt="Nails Ivonne"
+        width="253"
+        height="106"
+        loading="lazy"
+      />
+      <p>Diseños de uñas con detalle, hechos a tu medida.</p>
+    </div>
+
+    <nav aria-label="Pie de página">
+      <ul>
+        @for (item of nav; track item.fragment) {
+          <li>
+            <a routerLink="/" [fragment]="item.fragment">{{ item.label }}</a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    @if (instagram || whatsapp) {
+      <ul class="redes" aria-label="Redes">
+        @if (instagram) {
+          <li>
+            <a [href]="instagram" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle cx="17.2" cy="6.8" r="0.6" class="relleno" />
+              </svg>
+              &#64;{{ instagramUsuario }}
+            </a>
+          </li>
+        }
+        @if (whatsapp) {
+          <li>
+            <a [href]="whatsapp" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M4.5 19.5l1.1-3.6A8 8 0 1 1 8.4 18.6z M9 8.6c0 3.4 2.9 6.4 6.4 6.4l1.1-1.4-1.9-1-1 .8a4.6 4.6 0 0 1-2.4-2.4l.8-1-1-1.9z"
+                />
+              </svg>
+              WhatsApp
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div class="contenedor legal">
+    <p>© {{ anio }} {{ nombre }}</p>
+  </div>
+</footer>

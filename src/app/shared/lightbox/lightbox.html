@@ -1,0 +1,62 @@
+<dialog
+  #dialog
+  class="lightbox"
+  aria-labelledby="lightbox-titulo"
+  (close)="alCerrar()"
+  (click)="clicFondo($event)"
+  (keydown)="teclado($event)"
+>
+  @if (trabajo(); as t) {
+    <div class="barra">
+      <p class="contador" aria-live="polite">
+        Foto {{ posicion() }} de {{ total() }}
+      </p>
+      <button type="button" class="icono" (click)="cerrar()" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="escenario" (click)="clicFondo($event)">
+      <button type="button" class="icono nav prev" (click)="anterior()" aria-label="Foto anterior">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+      </button>
+
+      <img
+        class="foto"
+        [src]="src()"
+        [attr.srcset]="srcset()"
+        sizes="(min-width: 960px) 60vw, 100vw"
+        [width]="t.imagen.width"
+        [height]="t.imagen.height"
+        [alt]="t.alt"
+        (pointerdown)="inicioGesto($event)"
+        (pointerup)="finGesto($event)"
+        draggable="false"
+      />
+
+      <button type="button" class="icono nav next" (click)="siguiente()" aria-label="Foto siguiente">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+      </button>
+    </div>
+
+    <div class="info">
+      <div>
+        <p class="meta">
+          {{ t.id }}
+          @if (categoria(); as c) {
+            <span aria-hidden="true">·</span> {{ c }}
+          }
+        </p>
+        <h2 id="lightbox-titulo">{{ t.titulo }}</h2>
+      </div>
+      @if (whatsapp(); as wa) {
+        <a class="btn btn-claro" [href]="wa" target="_blank" rel="noopener">
+          Quiero algo similar
+          <span class="sr-only">(abre WhatsApp)</span>
+        </a>
+      }
+    </div>
+  }
+</dialog>

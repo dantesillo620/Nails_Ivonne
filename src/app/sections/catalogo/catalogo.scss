@@ -1,0 +1,172 @@
+.catalogo {
+  padding-bottom: clamp(4.5rem, 10vw, 8.5rem);
+}
+
+.encabezado {
+  padding-top: clamp(3rem, 7vw, 5rem);
+  border-top: 1px solid var(--linea);
+}
+
+/* ---------- Filtros ---------- */
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.5rem 1.1rem;
+  border: 1px solid var(--linea);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tinta);
+  font-size: 0.92rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease,
+    transform 160ms var(--ease-out);
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &.activo {
+    background: var(--vino);
+    border-color: var(--vino);
+    color: var(--marfil);
+
+    .cantidad {
+      color: var(--rosa);
+    }
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .filtro:not(.activo):hover {
+    border-color: var(--rosa);
+    background: color-mix(in srgb, var(--rosa) 30%, transparent);
+  }
+}
+
+.cantidad {
+  font-size: 0.78rem;
+  color: var(--tinta-suave);
+  font-variant-numeric: tabular-nums;
+}
+
+.estado {
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--tinta-suave);
+}
+
+/* ---------- Galería en columnas: respeta la proporción de cada foto ---------- */
+
+.galeria {
+  columns: 2;
+  column-gap: clamp(0.75rem, 2.5vw, 1.75rem);
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+
+  @media (min-width: 720px) {
+    columns: 3;
+  }
+  @media (min-width: 1200px) {
+    columns: 4;
+  }
+
+  li {
+    break-inside: avoid;
+    margin-bottom: clamp(1.25rem, 3vw, 2rem);
+    /* Los diseños que aparecen (filtro o "ver más") entran suavemente */
+    transition:
+      opacity 350ms var(--ease-out),
+      transform 350ms var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 30ms);
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+}
+
+.tarjeta {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: zoom-in;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+}
+
+.marco {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radio);
+  background: var(--marfil-2);
+
+  ::ng-deep img {
+    transition: transform 600ms var(--ease-out);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tarjeta:hover .marco ::ng-deep img {
+    transform: scale(1.03);
+  }
+}
+
+.pie {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.6rem;
+}
+
+.titulo {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-style: italic;
+  line-height: 1.25;
+}
+
+.id {
+  flex: none;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: var(--tinta-suave);
+}
+
+.mas {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .galeria li {
+    transition: opacity 250ms ease;
+    transition-delay: 0ms;
+
+    @starting-style {
+      transform: none;
+    }
+  }
+}

@@ -1,7 +1,8 @@
 # Nails Ivonne
 
-Sitio web de Nails Ivonne hecho con Angular 22 y **prerenderizado (SSG)**: cada página
-se genera como HTML estático con su SEO ya incluido.
+Sitio web de Nails Ivonne hecho con Angular 22 y **prerenderizado (SSG)**: la página se
+genera como HTML estático con su SEO incluido y se puede publicar en Vercel o en cualquier
+hosting (Hostinger, Apache).
 
 ## Requisitos
 
@@ -14,28 +15,63 @@ se genera como HTML estático con su SEO ya incluido.
 | `npm start` | Servidor de desarrollo en http://localhost:4200 |
 | `npm run build` | Genera el sitio en `dist/nails-ivonne/browser` |
 | `npx ng test` | Ejecuta las pruebas |
+| `npm run fotos -- "<archivo>" ni-37` | Genera las copias WebP de una foto nueva (macOS) |
 
-## SEO
+## Datos del negocio y textos
 
-- **Datos del sitio y del negocio:** `src/app/core/site.config.ts` (dominio, teléfono,
-  dirección, horarios, redes sociales).
-- **Título y descripción por página:** propiedades `title` y `data.seo` en `src/app/app.routes.ts`.
-- `SeoTitleStrategy` aplica en cada ruta el título, la descripción, el canonical, Open Graph y
-  Twitter Card. La página de inicio también agrega el JSON-LD `NailSalon`.
-- `public/robots.txt` y `public/sitemap.xml`: actualiza el dominio y agrega cada página nueva.
-- Imagen para compartir en redes: `public/og-image.jpg` (1200×630).
+Todo está en **`src/app/core/site.config.ts`**:
 
-## Agregar una página
+- `contacto.whatsapp`: número internacional, solo dígitos (México: `52` + 10 dígitos).
+  Mientras esté vacío no se muestra ningún enlace de WhatsApp.
+- `contacto.instagram`: usuario sin `@`.
+- `contacto.direccion`, `contacto.mapsUrl`, `contacto.horarios`: se muestran solo si se llenan.
+- `textos`: titulares y textos de cada sección y los mensajes de WhatsApp.
+- `url`: dominio definitivo (también en `public/robots.txt` y `public/sitemap.xml`).
 
-1. Crea el componente en `src/app/pages/<nombre>/<nombre>.ts` (con `export default`).
-2. Agrega la ruta con su `title` y `data.seo` en `app.routes.ts`.
-3. Agrega la URL a `public/sitemap.xml`.
+## Agregar fotos al catálogo
+
+1. Copia el original a `public/images/trabajos/` (los originales no se publican).
+2. Ejecuta `npm run fotos -- "public/images/trabajos/<archivo>" ni-37` (requiere
+   `brew install webp`). Crea las versiones en `public/images/trabajos/web/`.
+3. Pega la línea que imprime en `TRABAJOS` (`src/app/data/trabajos.ts`) y completa
+   título, categoría (`clasicos`, `brillo` o `arte`) y un texto alternativo que describa la foto.
+4. Para mostrarla en destacados, agrega `destacado: true`.
+
+El orden del arreglo `TRABAJOS` es el orden del catálogo. La foto de portada y la de
+"Experiencia" se eligen al final del mismo archivo.
+
+## Identidad visual
+
+En `public/brand/`, en SVG con las letras convertidas a trazos (no dependen de fuentes instaladas):
+
+| Archivo | Uso |
+|---|---|
+| `logo-nails-ivonne.svg` | Logo principal, fondos claros |
+| `logo-nails-ivonne-claro.svg` | Logo para fondos oscuros |
+| `isotipo-nails-ivonne.svg` / `-claro.svg` | Monograma NI en silueta de uña |
+| `favicon.svg`, `apple-touch-icon.png`, `/favicon.ico` | Iconos del sitio |
+| `og-nails-ivonne.jpg` | Imagen para compartir en redes (1200×630) |
+
+Tipografías (licencia OFL, autoalojadas con Fontsource): **Cormorant Garamond** para títulos
+y **Jost** para textos. Colores en `src/styles.scss` (`--marfil`, `--rosa`, `--nude`, `--vino`,
+`--ciruela`, `--dorado`).
+
+## Estructura
+
+```
+src/app/
+  core/          configuración, enlaces de contacto y SEO
+  data/          catálogo de trabajos
+  layout/        encabezado (con menú móvil) y pie de página
+  sections/      portada, destacados, catálogo, experiencia, contacto
+  shared/        imagen responsiva, aparición al hacer scroll, visor de fotos
+  pages/         inicio y 404
+```
 
 ## Despliegue
 
-- **Vercel:** ya configurado en `vercel.json`; solo conecta el repositorio.
+- **Vercel:** configurado en `vercel.json`; solo conecta el repositorio.
 - **Hostinger (hosting compartido):** sube el contenido de `dist/nails-ivonne/browser` a
   `public_html`. El `.htaccess` incluido maneja las URLs.
 - **SSR más adelante:** cambia `"outputMode"` a `"server"` en `angular.json` y define
-  `RenderMode.Server` para las rutas dinámicas en `src/app/app.routes.server.ts`
-  (necesita un hosting con Node.js).
+  `RenderMode.Server` en `src/app/app.routes.server.ts` (necesita un hosting con Node.js).

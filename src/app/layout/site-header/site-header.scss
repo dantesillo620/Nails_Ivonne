@@ -1,0 +1,230 @@
+:host {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: block;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color 250ms ease,
+    border-color 250ms ease,
+    box-shadow 250ms ease;
+}
+
+:host(.con-fondo),
+:host(.menu-abierto) {
+  background: color-mix(in srgb, var(--marfil) 92%, transparent);
+  border-bottom-color: var(--linea);
+  backdrop-filter: saturate(1.2) blur(10px);
+  -webkit-backdrop-filter: saturate(1.2) blur(10px);
+}
+
+/* Enlace para teclado: invisible hasta recibir foco */
+.saltar {
+  position: absolute;
+  left: var(--gutter);
+  top: 0.75rem;
+  z-index: 60;
+  padding: 0.6rem 1rem;
+  background: var(--vino);
+  color: var(--marfil);
+  border-radius: var(--radio);
+  text-decoration: none;
+
+  &:not(:focus) {
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+}
+
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: var(--header-h);
+}
+
+.marca {
+  display: block;
+  flex: none;
+  padding-block: 0.25rem;
+
+  img {
+    height: 46px;
+    width: auto;
+  }
+}
+
+.nav-escritorio {
+  display: none;
+
+  ul {
+    display: flex;
+    gap: clamp(1.25rem, 2.5vw, 2.5rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    position: relative;
+    display: inline-block;
+    padding-block: 0.5rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    color: var(--tinta);
+
+    /* Filete que crece desde la izquierda al pasar el cursor */
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0.25rem;
+      height: 1px;
+      background: var(--dorado);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 250ms var(--ease-out);
+    }
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nav-escritorio a:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cta {
+  display: none;
+  min-height: 44px;
+  padding-inline: 1.3rem;
+}
+
+.boton-menu {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-right: -0.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hamburguesa {
+  display: grid;
+  gap: 7px;
+  width: 24px;
+
+  span {
+    display: block;
+    height: 1.5px;
+    background: var(--tinta);
+    border-radius: 2px;
+    transition: transform 250ms var(--ease-out);
+  }
+}
+
+:host(.menu-abierto) .hamburguesa span:first-child {
+  transform: translateY(4.25px) rotate(45deg);
+}
+:host(.menu-abierto) .hamburguesa span:last-child {
+  transform: translateY(-4.25px) rotate(-45deg);
+}
+
+/* ---------- Menú móvil ---------- */
+
+.menu-movil {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--marfil);
+  border-bottom: 1px solid var(--linea);
+  box-shadow: 0 24px 40px -24px rgb(62 18 36 / 0.25);
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity 200ms var(--ease-out),
+    transform 200ms var(--ease-out),
+    visibility 0s linear 200ms;
+
+  &.abierto {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 200ms var(--ease-out),
+      transform 200ms var(--ease-out),
+      visibility 0s;
+  }
+
+  ul {
+    margin: 0;
+    padding-block: 0.75rem 1.5rem;
+    list-style: none;
+  }
+
+  li:not(.menu-cta) a {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    border-bottom: 1px solid var(--linea);
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    text-decoration: none;
+  }
+
+  .menu-cta {
+    padding-top: 1.5rem;
+
+    .btn {
+      width: 100%;
+    }
+  }
+}
+
+@media (min-width: 560px) {
+  .cta {
+    display: inline-flex;
+  }
+  .menu-movil .menu-cta {
+    display: none;
+  }
+}
+
+@media (min-width: 960px) {
+  .nav-escritorio {
+    display: block;
+  }
+  .boton-menu,
+  .menu-movil {
+    display: none;
+  }
+  .marca img {
+    height: 52px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-movil {
+    transform: none;
+  }
+}

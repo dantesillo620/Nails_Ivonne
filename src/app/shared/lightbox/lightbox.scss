@@ -1,0 +1,178 @@
+.lightbox {
+  /* Ocupa toda la pantalla; el fondo oscuro es el propio diálogo */
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: color-mix(in srgb, var(--ciruela-2) 97%, transparent);
+  color: var(--marfil);
+  overflow: hidden;
+
+  &[open] {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+
+  /* Entrada: modal centrado, sin transform-origin anclado */
+  opacity: 1;
+  transition:
+    opacity 250ms var(--ease-out),
+    overlay 250ms allow-discrete,
+    display 250ms allow-discrete;
+
+  @starting-style {
+    &[open] {
+      opacity: 0;
+    }
+  }
+
+  /* Salida más rápida que la entrada */
+  &:not([open]) {
+    opacity: 0;
+    transition-duration: 150ms;
+  }
+
+  &::backdrop {
+    background: transparent;
+  }
+
+  :focus-visible {
+    outline-color: var(--rosa);
+  }
+}
+
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem clamp(0.75rem, 3vw, 2rem);
+}
+
+.contador {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--rosa);
+}
+
+.escenario {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 0 clamp(0.75rem, 6vw, 5.5rem);
+}
+
+.foto {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--radio);
+  touch-action: pan-y;
+  user-select: none;
+  transform: scale(1);
+  transition: transform 300ms var(--ease-out);
+
+  @starting-style {
+    transform: scale(0.97);
+  }
+}
+
+.info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  width: 100%;
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: 1.25rem clamp(1rem, 4vw, 2rem) max(1.25rem, env(safe-area-inset-bottom));
+
+  h2 {
+    font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.25rem);
+    font-style: italic;
+    margin-top: 0.15rem;
+  }
+}
+
+.meta {
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rosa);
+}
+
+.icono {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--marfil) 25%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ciruela) 60%, transparent);
+  color: var(--marfil);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 200ms ease,
+    transform 160ms var(--ease-out);
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .icono:hover {
+    background: color-mix(in srgb, var(--vino) 70%, transparent);
+  }
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 1;
+
+  &.prev {
+    left: clamp(0.5rem, 2vw, 1.5rem);
+  }
+  &.next {
+    right: clamp(0.5rem, 2vw, 1.5rem);
+  }
+}
+
+@media (max-width: 639px) {
+  /* En móvil las flechas bajan para no tapar la foto */
+  .nav {
+    top: auto;
+    bottom: 0.5rem;
+    translate: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .foto {
+    transition: none;
+  }
+}

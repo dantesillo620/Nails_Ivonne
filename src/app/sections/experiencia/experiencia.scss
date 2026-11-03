@@ -1,0 +1,87 @@
+.experiencia {
+  background: var(--marfil-2);
+}
+
+.rejilla {
+  display: grid;
+  gap: clamp(3rem, 7vw, 6rem);
+  align-items: center;
+
+  @media (min-width: 960px) {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+}
+
+.foto {
+  position: relative;
+  margin: 0;
+  width: min(100%, 30rem);
+  margin-inline: auto;
+
+  app-foto {
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: var(--radio) var(--radio) 999px 999px;
+  }
+}
+
+/* Monograma como sello sobre la foto */
+.sello {
+  position: absolute;
+  right: -0.5rem;
+  top: 2rem;
+  width: clamp(64px, 12vw, 92px);
+  height: auto;
+  padding: 0.85rem 0.75rem;
+  background: var(--marfil);
+  border-radius: 999px;
+  box-shadow: 0 20px 40px -24px rgb(62 18 36 / 0.4);
+
+  @media (min-width: 960px) {
+    right: -2rem;
+  }
+}
+
+.intro {
+  margin-top: 1.5rem;
+  max-width: 34rem;
+  font-size: clamp(1.05rem, 1rem + 0.3vw, 1.2rem);
+  color: var(--tinta-suave);
+}
+
+.puntos {
+  display: grid;
+  gap: 0;
+  margin: clamp(2rem, 5vw, 3rem) 0 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 1rem;
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--linea);
+
+    &[data-reveal] {
+      transition-delay: calc(var(--i, 0) * 80ms);
+    }
+  }
+
+  h3 {
+    font-size: 1.55rem;
+    font-style: italic;
+  }
+
+  p {
+    margin-top: 0.4rem;
+    color: var(--tinta-suave);
+  }
+}
+
+.numero {
+  padding-top: 0.35rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  color: var(--vino);
+}

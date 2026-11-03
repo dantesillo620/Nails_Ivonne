@@ -1,0 +1,45 @@
+<section id="trabajos" class="seccion" aria-labelledby="destacados-titulo">
+  <div class="contenedor">
+    <header class="encabezado" appReveal>
+      <div>
+        <p class="etiqueta">Trabajos</p>
+        <h2 id="destacados-titulo" class="titulo-seccion">{{ textos.titulo }}</h2>
+      </div>
+      <p class="texto-seccion">{{ textos.texto }}</p>
+    </header>
+
+    <ul class="rejilla">
+      @for (t of trabajos; track t.id; let i = $index) {
+        <li appReveal [style.--i]="i % 3">
+          <button
+            type="button"
+            class="tarjeta"
+            (click)="abrir(i, $event)"
+            [attr.aria-label]="'Ver en grande: ' + t.titulo"
+          >
+            <span class="marco">
+              <app-foto
+                [imagen]="t.imagen"
+                [alt]="t.alt"
+                sizes="(min-width: 960px) 30vw, 46vw"
+              />
+            </span>
+            <span class="pie">
+              <span class="numero" aria-hidden="true">{{ (i + 1).toString().padStart(2, '0') }}</span>
+              <span class="titulo">{{ t.titulo }}</span>
+            </span>
+          </button>
+        </li>
+      }
+    </ul>
+
+    <p class="ver-todo" appReveal>
+      <a class="enlace-flecha" routerLink="/" fragment="catalogo">
+        Ver catálogo completo
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+    </p>
+  </div>
+</section>

@@ -15,10 +15,12 @@ describe('App', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render the site name in the header', async () => {
+  it('should render the brand logo in the header', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.brand')?.textContent).toContain('Nails Ivonne');
+    const logo = compiled.querySelector<HTMLImageElement>('app-site-header .marca img');
+    expect(logo?.getAttribute('src')).toBe('/brand/logo-nails-ivonne.svg');
+    expect(logo?.alt).toContain('Nails Ivonne');
   });
 });

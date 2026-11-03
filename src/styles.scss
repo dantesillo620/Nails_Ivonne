@@ -1,10 +1,38 @@
-/* Estilos globales */
+/* ==========================================================================
+   Nails Ivonne · estilos globales
+   Paleta, tipografía, botones y movimiento compartidos por todo el sitio.
+   ========================================================================== */
+
 :root {
-  --bg: #fffafb;
-  --text: #2b2024;
-  --muted: #7a6a70;
-  --accent: #c2477a;
-  --border: #f0dfe5;
+  /* Paleta */
+  --marfil: #faf6f0; /* fondo principal */
+  --marfil-2: #f3ebe2; /* superficies */
+  --rosa: #e9c9c3; /* rosa empolvado */
+  --rosa-claro: #f4e2dd;
+  --nude: #dcbba6;
+  --vino: #6b1f3a; /* contraste y botones */
+  --vino-hover: #561730;
+  --ciruela: #3e1224; /* fondos oscuros */
+  --ciruela-2: #2c0c19;
+  --dorado: #b48a4e; /* solo detalles decorativos, no texto */
+  --dorado-claro: #d9b98a;
+  --tinta: #2b1a21; /* texto principal */
+  --tinta-suave: #66525a; /* texto secundario (contraste AA sobre marfil) */
+  --linea: #e6d8cf;
+
+  /* Tipografía (máximo dos familias, autoalojadas) */
+  --font-display: 'Cormorant Garamond Variable', 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Jost Variable', 'Jost', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Espaciado y medidas */
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --max: 1240px;
+  --header-h: 72px;
+  --radio: 4px;
+
+  /* Movimiento */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 
   color-scheme: light;
 }
@@ -16,23 +44,252 @@
 }
 
 html {
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  line-height: 1.6;
+  font-family: var(--font-sans);
+  font-size: 100%;
+  line-height: 1.65;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  scroll-padding-top: var(--header-h);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Sin scroll de fondo mientras el visor de fotos está abierto */
+html:has(dialog[open]) {
+  overflow: hidden;
 }
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
+  background: var(--marfil);
+  color: var(--tinta);
+  font-size: 1.0625rem;
+  overflow-x: clip;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
 }
 
 img {
-  max-width: 100%;
   height: auto;
-  display: block;
 }
 
-.page {
-  max-width: 960px;
-  margin: 0 auto;
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--vino);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--rosa);
+  color: var(--ciruela);
+}
+
+/* ---------- Utilidades ---------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.contenedor {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.seccion {
+  padding-block: clamp(4.5rem, 10vw, 8.5rem);
+}
+
+/* Etiqueta pequeña sobre los títulos, con filete dorado */
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--vino);
+
+  &::before {
+    content: '';
+    width: 2rem;
+    height: 1px;
+    background: var(--dorado);
+  }
+}
+
+.titulo-seccion {
+  font-size: clamp(2.25rem, 1.5rem + 3vw, 3.75rem);
+  margin-top: 1rem;
+
+  em {
+    font-style: italic;
+    color: var(--vino);
+  }
+}
+
+.texto-seccion {
+  margin-top: 1.25rem;
+  max-width: 34rem;
+  color: var(--tinta-suave);
+}
+
+/* ---------- Botones ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 48px;
+  padding: 0.75rem 1.6rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease,
+    transform 160ms var(--ease-out);
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  svg {
+    width: 1.1em;
+    height: 1.1em;
+    flex: none;
+  }
+}
+
+.btn-primario {
+  background: var(--vino);
+  color: var(--marfil);
+}
+
+.btn-secundario {
+  border-color: color-mix(in srgb, var(--vino) 45%, transparent);
+  color: var(--vino);
+}
+
+.btn-claro {
+  background: var(--marfil);
+  color: var(--vino);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-primario:hover {
+    background: var(--vino-hover);
+  }
+  .btn-secundario:hover {
+    border-color: var(--vino);
+    background: color-mix(in srgb, var(--rosa) 35%, transparent);
+  }
+  .btn-claro:hover {
+    background: var(--rosa-claro);
+  }
+}
+
+/* Enlace de texto con flecha */
+.enlace-flecha {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  font-weight: 500;
+  color: var(--vino);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--vino) 30%, transparent);
+  text-underline-offset: 0.35em;
+  transition: text-decoration-color 200ms ease;
+
+  svg {
+    width: 1.1em;
+    height: 1.1em;
+    transition: transform 200ms var(--ease-out);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .enlace-flecha:hover {
+    text-decoration-color: var(--vino);
+
+    svg {
+      transform: translateX(3px);
+    }
+  }
+}
+
+/* ---------- Aparición al hacer scroll (directiva appReveal) ---------- */
+
+[data-reveal] {
+  transition:
+    opacity 700ms var(--ease-out),
+    transform 700ms var(--ease-out);
+}
+
+[data-reveal='oculto'] {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    transition: opacity 300ms ease;
+  }
+  [data-reveal='oculto'] {
+    transform: none;
+  }
 }

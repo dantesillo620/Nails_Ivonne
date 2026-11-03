@@ -1,0 +1,28 @@
+<section id="experiencia" class="experiencia seccion" aria-labelledby="experiencia-titulo">
+  <div class="contenedor rejilla">
+    <figure class="foto" appReveal>
+      <app-foto [imagen]="foto.imagen" [alt]="foto.alt" sizes="(min-width: 960px) 40vw, 90vw" />
+      <img class="sello" src="/brand/isotipo-nails-ivonne.svg" alt="" width="100" height="132" loading="lazy" />
+    </figure>
+
+    <div class="texto">
+      <div appReveal>
+        <p class="etiqueta">La experiencia Nails Ivonne</p>
+        <h2 id="experiencia-titulo" class="titulo-seccion">{{ textos.titulo }}</h2>
+        <p class="intro">{{ textos.texto }}</p>
+      </div>
+
+      <ol class="puntos">
+        @for (p of textos.puntos; track p.titulo; let i = $index) {
+          <li appReveal [style.--i]="i">
+            <span class="numero" aria-hidden="true">{{ (i + 1).toString().padStart(2, '0') }}</span>
+            <div>
+              <h3>{{ p.titulo }}</h3>
+              <p>{{ p.texto }}</p>
+            </div>
+          </li>
+        }
+      </ol>
+    </div>
+  </div>
+</section>

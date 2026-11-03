@@ -1,21 +1,31 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { SITE } from './core/site.config';
+import { RouterOutlet } from '@angular/router';
+import { SiteFooter } from './layout/site-footer/site-footer';
+import { SiteHeader } from './layout/site-header/site-header';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, SiteHeader, SiteFooter],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './app.html',
-  styleUrl: './app.scss',
+  template: `
+    <app-site-header />
+    <main id="contenido" tabindex="-1">
+      <router-outlet />
+    </main>
+    <app-site-footer />
+  `,
+  styles: `
+    :host {
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+    }
+    main {
+      flex: 1;
+    }
+    main:focus {
+      outline: none;
+    }
+  `,
 })
-export class App {
-  protected readonly siteName = SITE.name;
-  protected readonly year = new Date().getFullYear();
-  protected readonly nav = [
-    { path: '/', label: 'Inicio', exact: true },
-    { path: '/servicios', label: 'Servicios', exact: false },
-    { path: '/galeria', label: 'Galería', exact: false },
-    { path: '/contacto', label: 'Contacto', exact: false },
-  ];
-}
+export class App {}

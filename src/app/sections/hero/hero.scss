@@ -1,0 +1,208 @@
+.hero {
+  padding-block: clamp(1.5rem, 4vw, 3rem) clamp(3rem, 6vw, 4rem);
+  overflow: clip;
+}
+
+.rejilla {
+  display: grid;
+  gap: clamp(3rem, 8vw, 4.5rem);
+  align-items: center;
+
+  @media (min-width: 960px) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(3rem, 6vw, 6rem);
+    min-height: min(calc(100svh - var(--header-h) - 4rem), 52rem);
+  }
+}
+
+/* ---------- Texto ---------- */
+
+h1 {
+  margin-top: 1.25rem;
+  font-size: clamp(2.9rem, 1.4rem + 5.6vw, 5.9rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+
+  em {
+    display: block;
+    font-style: italic;
+    color: var(--vino);
+  }
+}
+
+.bajada {
+  margin-top: 1.75rem;
+  max-width: 30rem;
+  font-size: clamp(1.05rem, 1rem + 0.3vw, 1.2rem);
+  color: var(--tinta-suave);
+}
+
+.botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2.25rem;
+}
+
+/* ---------- Composición fotográfica ---------- */
+
+.composicion {
+  position: relative;
+  width: min(100%, 34rem);
+  margin-inline: auto;
+  /* Espacio bajo la foto principal para la firma */
+  padding-bottom: 4.5rem;
+
+  @media (min-width: 960px) {
+    margin-inline: auto 0;
+  }
+}
+
+figure {
+  margin: 0;
+}
+
+.principal app-foto,
+.secundaria app-foto {
+  height: 100%;
+}
+
+.principal {
+  position: relative;
+  z-index: 1;
+  width: 80%;
+  margin-left: auto;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  /* Arco superior que recuerda la forma de una uña almendrada */
+  border-radius: 999px 999px var(--radio) var(--radio);
+  background: var(--marfil-2);
+}
+
+.secundaria {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  bottom: 0;
+  width: 40%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border: clamp(4px, 1vw, 8px) solid var(--marfil);
+  border-radius: var(--radio);
+  background: var(--marfil-2);
+  box-shadow: 0 30px 50px -30px rgb(62 18 36 / 0.45);
+}
+
+/* Filete dorado en el espacio libre junto a la foto principal */
+.silueta {
+  position: absolute;
+  z-index: 0;
+  top: 6%;
+  left: 0;
+  width: 17%;
+  height: auto;
+  fill: none;
+  stroke: var(--dorado);
+  stroke-width: 1.2;
+}
+
+.firma {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  justify-items: end;
+  gap: 0.1rem;
+  width: 58%;
+  text-align: right;
+
+  span {
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
+  }
+
+  em {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    color: var(--vino);
+  }
+}
+
+/* ---------- Entrada (solo al cargar la página) ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .entrada {
+    animation: hero-texto 900ms var(--ease-out) both;
+    animation-delay: calc(var(--d, 0) * 90ms + 120ms);
+  }
+
+  .principal {
+    animation: hero-foto 1100ms var(--ease-in-out) both;
+
+    ::ng-deep img {
+      animation: hero-zoom 1600ms var(--ease-out) both;
+    }
+  }
+
+  .secundaria {
+    animation: hero-texto 900ms var(--ease-out) 550ms both;
+  }
+
+  .firma {
+    animation: hero-fade 700ms ease 900ms both;
+  }
+
+  .silueta path {
+    stroke-dasharray: 1;
+    animation: hero-trazo 1800ms var(--ease-in-out) 400ms both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entrada,
+  .principal,
+  .secundaria,
+  .firma {
+    animation: hero-fade 400ms ease both;
+  }
+}
+
+@keyframes hero-texto {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes hero-foto {
+  from {
+    clip-path: inset(100% 0 0 0 round 999px 999px 4px 4px);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 999px 999px 4px 4px);
+  }
+}
+
+@keyframes hero-zoom {
+  from {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes hero-trazo {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}

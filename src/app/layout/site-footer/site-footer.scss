@@ -1,0 +1,87 @@
+.pie {
+  background: var(--ciruela);
+  color: var(--rosa-claro);
+  padding-top: clamp(3.5rem, 8vw, 5.5rem);
+
+  :focus-visible {
+    outline-color: var(--rosa);
+  }
+}
+
+.rejilla {
+  display: grid;
+  gap: 2.5rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1.4fr 1fr auto;
+    align-items: start;
+  }
+}
+
+.identidad {
+  img {
+    height: 64px;
+    width: auto;
+  }
+
+  p {
+    margin-top: 1.25rem;
+    max-width: 22rem;
+    font-size: 0.95rem;
+    color: color-mix(in srgb, var(--rosa-claro) 85%, transparent);
+  }
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav ul {
+  display: grid;
+  gap: 0.25rem;
+}
+
+a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  color: var(--marfil);
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  a:hover {
+    color: var(--dorado-claro);
+  }
+}
+
+.redes {
+  display: grid;
+  gap: 0.25rem;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+  }
+
+  .relleno {
+    fill: currentColor;
+    stroke: none;
+  }
+}
+
+.legal {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+  padding-block: 1.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--rosa) 18%, transparent);
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--rosa-claro) 75%, transparent);
+}

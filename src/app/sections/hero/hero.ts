@@ -1,0 +1,19 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { whatsappUrl } from '../../core/contacto';
+import { SITE } from '../../core/site.config';
+import { PORTADA } from '../../data/trabajos';
+import { Foto } from '../../shared/foto';
+
+@Component({
+  selector: 'app-hero',
+  imports: [RouterLink, Foto],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './hero.html',
+  styleUrl: './hero.scss',
+})
+export class Hero {
+  protected readonly textos = SITE.textos.hero;
+  protected readonly portada = PORTADA;
+  protected readonly whatsapp = whatsappUrl();
+}
