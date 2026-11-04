@@ -5,9 +5,11 @@ import { SITE, SiteConfig } from './site.config';
 type ConfigAgenda = SiteConfig['agenda'];
 
 export interface DiaAgenda {
-  /** 'AAAA-MM-DD', fecha local. */
+  /** 'AAAA-MM-DD', fecha del estudio. */
   clave: string;
   fecha: Date;
+  /** Horario de ese día de la semana. */
+  todas: string[];
   /** Horas que todavía se pueden pedir ese día. */
   horas: string[];
 }
@@ -59,13 +61,31 @@ function tituloSemana(inicio: Date, fin: Date): string {
 }
 
 /**
+ * Fecha y minutos del día en la zona del estudio. `fecha` es un Date a medianoche
+ * local que solo representa el día del calendario (año, mes, día).
+ */
+export function relojEstudio(ahora: Date, zonaHoraria: string): { fecha: Date; minutos: number } {
+  const partes = new Intl.DateTimeFormat('en-US', {
+    timeZone: zonaHoraria,
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hourCycle: 'h23',
+  }).formatToParts(ahora);
+  const n = (tipo: Intl.DateTimeFormatPartTypes) => Number(partes.find((p) => p.type === tipo)?.value);
+  return { fecha: new Date(n('year'), n('month') - 1, n('day')), minutos: n('hour') * 60 + n('minute') };
+}
+
+/**
  * Semanas de lunes a domingo con los días de atención. Los días pasados (o sin
  * horas que todavía se puedan pedir) se incluyen sin horas, para que la
  * semana se lea completa. Si la semana actual ya no tiene horas, empieza en la siguiente.
+ * "Hoy" es el día en la zona horaria del estudio, no el del dispositivo.
  */
 export function generarSemanas(ahora: Date, cfg: ConfigAgenda = SITE.agenda): SemanaAgenda[] {
-  const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
-  const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
+  const { fecha: hoy, minutos: minutosAhora } = relojEstudio(ahora, cfg.zonaHoraria);
   const lunes = sumarDias(hoy, -((hoy.getDay() + 6) % 7));
 
   const semanas: SemanaAgenda[] = [];
@@ -74,12 +94,13 @@ export function generarSemanas(ahora: Date, cfg: ConfigAgenda = SITE.agenda): Se
     const dias: DiaAgenda[] = [];
     for (let i = 0; i < 7; i++) {
       const fecha = sumarDias(inicio, i);
-      if (!cfg.dias.includes(fecha.getDay())) continue;
+      const todas = cfg.horas[fecha.getDay()] ?? [];
+      if (todas.length === 0) continue;
       let horas: string[] = [];
-      if (fecha > hoy) horas = [...cfg.horas];
+      if (fecha > hoy) horas = [...todas];
       else if (fecha.getTime() === hoy.getTime())
-        horas = cfg.horas.filter((h) => minutos(h) - minutosAhora >= cfg.anticipacionMinutos);
-      dias.push({ clave: claveFecha(fecha), fecha, horas });
+        horas = todas.filter((h) => minutos(h) - minutosAhora >= cfg.anticipacionMinutos);
+      dias.push({ clave: claveFecha(fecha), fecha, todas, horas });
     }
     if (dias.length === 0) continue;
     semanas.push({ titulo: tituloSemana(dias[0].fecha, dias[dias.length - 1].fecha), dias });

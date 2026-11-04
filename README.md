@@ -28,8 +28,10 @@ Todo está en **`src/app/core/site.config.ts`**:
   Mientras esté vacío no se muestra ningún enlace de WhatsApp.
 - `contacto.instagram`: usuario sin `@`.
 - `contacto.direccion`, `contacto.mapsUrl`, `contacto.horarios`: se muestran solo si se llenan.
-- `agenda`: días que se atiende (`0` domingo … `6` sábado), horas de inicio de cita,
-  semanas visibles y anticipación mínima para el mismo día.
+- `agenda`: zona horaria del estudio (`America/Mexico_City`, Guadalajara), horas de inicio de
+  cita por día (`0` domingo … `6` sábado; un día sin horas no se atiende), semanas visibles y
+  anticipación mínima para el mismo día. "Hoy" se calcula con la hora de Guadalajara, no con la
+  del celular de la clienta.
 - `textos`: titulares y textos de cada sección y los mensajes de WhatsApp.
 - `url`: dominio definitivo (también en `public/robots.txt`; `public/sitemap.xml` se genera
   al compilar). Los enlaces que llegan por WhatsApp usan este dominio.
@@ -38,7 +40,8 @@ Todo está en **`src/app/core/site.config.ts`**:
 
 - En el catálogo, el visor y la página de cada diseño hay un botón **+ / Elegir para mi
   cita**. Lo elegido se guarda en el navegador de la clienta y aparece en la sección **Agenda**.
-- En la agenda elige día (lunes a sábado), hora y, si quiere, nombre y comentarios. El botón
+- En la agenda elige día (lunes a sábado), hora (cambian entre semana y sábado) y, si quiere,
+  nombre y comentarios. El botón
   abre WhatsApp con el mensaje armado para Ivonne. **No reserva nada**: Ivonne confirma por
   mensaje. La página no sabe qué horas están ocupadas.
 - WhatsApp no permite adjuntar fotos desde un enlace, así que el mensaje incluye la dirección

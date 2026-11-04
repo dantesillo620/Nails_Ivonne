@@ -73,7 +73,7 @@ proxy de Angular quitará el prefijo.
 | `citas` | Nombre, WhatsApp (solo dígitos), fecha y hora locales, estado (`pendiente`, `confirmada`, `cancelada`) y nota |
 | `citas_trabajos` | Diseños que la clienta eligió para su cita |
 | `bloqueos` | Días u horarios sin atención; `hora` vacía bloquea el día completo |
-| `ajustes` | JSON por clave. `agenda`: días, horas, semanas visibles, anticipación y zona horaria |
+| `ajustes` | JSON por clave. `agenda`: zona horaria (`America/Mexico_City`), horas de inicio por día, semanas visibles y anticipación |
 | `usuarios` | Cuentas del panel; la contraseña se guarda como hash |
 | `push_suscripciones` | Dispositivos de cada cuenta que reciben notificaciones |
 
@@ -86,8 +86,6 @@ Reglas que cuida la base, no solo la API:
 
 `config/Seeds/catalogo.json` es el catálogo exportado de `trabajos.ts` el 2026-11-04. Los seeds omiten
 lo que ya existe. CakePHP recuerda qué seeds corrieron, así que para repetir uno usa `--force`.
-
-**Por confirmar:** `ajustes.agenda.zonaHoraria` quedó en `America/Denver` (Utah, por la lada 385).
 
 ## Producción (Hostinger)
 

@@ -56,7 +56,7 @@
         <fieldset class="paso" [disabled]="!dia()">
           <legend><span class="num" aria-hidden="true">2</span> Elige la hora</legend>
           <div class="horas">
-            @for (h of horas; track h) {
+            @for (h of horasDia(); track h) {
               <label class="hora" [class.elegido]="hora() === h">
                 <input
                   type="radio"

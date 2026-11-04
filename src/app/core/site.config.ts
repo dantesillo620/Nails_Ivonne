@@ -48,10 +48,16 @@ export interface SiteConfig {
    * hora y se arma un WhatsApp para que Ivonne confirme.
    */
   agenda: {
-    /** Días que se atiende: 0 domingo, 1 lunes … 6 sábado. */
-    dias: number[];
-    /** Horas de inicio de cita que se ofrecen, en formato 24 h ('16:00'). */
-    horas: string[];
+    /**
+     * Zona horaria del estudio. "Hoy" y la anticipación se calculan con esta
+     * hora, no con la del dispositivo de la clienta.
+     */
+    zonaHoraria: string;
+    /**
+     * Horas de inicio de cita por día, en formato 24 h ('14:00').
+     * Clave: 0 domingo, 1 lunes … 6 sábado. Un día sin horas no se atiende.
+     */
+    horas: Partial<Record<number, string[]>>;
     /** Cuántas semanas se muestran. */
     semanas: number;
     /** Minutos mínimos de anticipación para ofrecer una hora del mismo día. */
@@ -93,21 +99,31 @@ export const SITE: SiteConfig = {
     direccion: {
       calle: '', // TODO
       colonia: '',
-      ciudad: '',
-      estado: '',
+      ciudad: 'Guadalajara',
+      estado: 'Jalisco',
       codigoPostal: '',
       pais: 'MX',
     },
     mapsUrl: '',
     horarios: [
-      { dias: 'Lunes a sábado', horas: '4:00 a 8:00 p. m.', schema: 'Mo-Sa 16:00-20:00' },
+      { dias: 'Lunes a viernes', horas: '2:00 a 8:00 p. m.', schema: 'Mo-Fr 14:00-20:00' },
+      { dias: 'Sábado', horas: '9:00 a. m. a 8:00 p. m.', schema: 'Sa 09:00-20:00' },
       { dias: 'Domingo', horas: 'Cerrado' },
     ],
   },
 
   agenda: {
-    dias: [1, 2, 3, 4, 5, 6],
-    horas: ['16:00', '18:00'],
+    // El estudio está en Guadalajara.
+    zonaHoraria: 'America/Mexico_City',
+    // Citas cada 2 horas desde que abre, terminando a más tardar a las 8:00 p. m.
+    horas: {
+      1: ['14:00', '16:00', '18:00'],
+      2: ['14:00', '16:00', '18:00'],
+      3: ['14:00', '16:00', '18:00'],
+      4: ['14:00', '16:00', '18:00'],
+      5: ['14:00', '16:00', '18:00'],
+      6: ['09:00', '11:00', '13:00', '15:00', '17:00'],
+    },
     semanas: 2,
     anticipacionMinutos: 60,
   },

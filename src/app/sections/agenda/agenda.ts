@@ -36,7 +36,6 @@ export class Agenda {
 
   protected readonly textos = SITE.textos.agenda;
   protected readonly horario = SITE.contacto.horarios.filter((h) => h.dias && h.horas);
-  protected readonly horas = SITE.agenda.horas;
   protected readonly formatoHora = formatoHora;
 
   protected readonly semanas = signal<SemanaAgenda[]>([]);
@@ -45,6 +44,9 @@ export class Agenda {
   protected readonly nombre = signal('');
   protected readonly nota = signal('');
   protected readonly error = signal(false);
+
+  /** Horario del día elegido; cambia entre semana y sábado. */
+  protected readonly horasDia = computed(() => this.dia()?.todas ?? []);
 
   protected readonly resumen = computed(() => {
     const d = this.dia();
