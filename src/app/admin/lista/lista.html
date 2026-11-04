@@ -1,0 +1,159 @@
+<section aria-labelledby="lista-titulo">
+  <header class="encabezado">
+    <div>
+      <h1 id="lista-titulo">Catálogo</h1>
+      @if (catalogo.cargado()) {
+        <p class="resumen">
+          {{ cuentas().visibles }} en el sitio
+          @if (cuentas().ocultos) {
+            · {{ cuentas().ocultos }} ocultos
+          }
+        </p>
+      }
+    </div>
+    <a class="btn btn-primario" routerLink="/admin/nuevo">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        aria-hidden="true"
+      >
+        <path d="M12 5v14M5 12h14" stroke-linecap="round" />
+      </svg>
+      Agregar diseño
+    </a>
+  </header>
+
+  <p class="aviso" [class.es-error]="aviso()?.error" role="status" aria-live="polite">
+    {{ aviso()?.texto }}
+  </p>
+
+  @if (error()) {
+    <div class="estado-error" role="alert">
+      <p>{{ error() }}</p>
+      <button type="button" class="btn btn-secundario" (click)="error.set(''); catalogo.cargar()">
+        Intentar de nuevo
+      </button>
+    </div>
+  } @else if (!catalogo.cargado()) {
+    <p class="cargando">Cargando diseños…</p>
+  } @else {
+    <div class="filtros" role="group" aria-label="Mostrar">
+      @for (f of filtros; track f.id) {
+        <button
+          type="button"
+          class="filtro"
+          [class.activo]="filtro() === f.id"
+          [attr.aria-pressed]="filtro() === f.id"
+          (click)="filtro.set(f.id)"
+        >
+          {{ f.nombre }} <span class="cantidad">{{ cuentas()[f.id] }}</span>
+        </button>
+      }
+    </div>
+
+    @if (!ordenable()) {
+      <p class="nota">Para cambiar el orden, elige "Todos".</p>
+    }
+
+    @if (lista().length === 0) {
+      <p class="vacio">No hay diseños aquí.</p>
+    }
+
+    <ol class="lista">
+      @for (t of lista(); track t.id; let primero = $first; let ultimo = $last) {
+        <li class="item" [class.oculto]="!t.visible" [attr.aria-busy]="ocupado(t.id) || null">
+          <a class="foto" [routerLink]="['/admin/disenos', t.id]" tabindex="-1" aria-hidden="true">
+            <img
+              [src]="miniatura(t)"
+              [width]="t.imagen.width"
+              [height]="t.imagen.height"
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+          </a>
+
+          <div class="datos">
+            <p class="codigo">
+              {{ t.codigo }}
+              @if (catalogo.nombreCategoria(t.categoria); as c) {
+                <span aria-hidden="true">·</span> {{ c }}
+              }
+            </p>
+            <h2 class="titulo">
+              <a [routerLink]="['/admin/disenos', t.id]">{{ t.titulo }}</a>
+            </h2>
+            <p class="marcas">
+              @if (!t.visible) {
+                <span class="marca marca-oculto">Oculto</span>
+              }
+              @if (t.destacado) {
+                <span class="marca marca-destacado">Destacado</span>
+              }
+            </p>
+          </div>
+
+          <div class="controles">
+            <label class="interruptor">
+              <input
+                type="checkbox"
+                role="switch"
+                [checked]="t.visible"
+                [disabled]="ocupado(t.id)"
+                (change)="alternarVisible(t, $event)"
+              />
+              <span class="pista" aria-hidden="true"></span>
+              <span
+                >En el sitio<span class="sr-only">: {{ t.codigo }}</span></span
+              >
+            </label>
+
+            <button
+              type="button"
+              class="icono"
+              [class.activo]="t.destacado"
+              [attr.aria-pressed]="t.destacado"
+              [disabled]="ocupado(t.id)"
+              (click)="alternar(t, 'destacado')"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.9z"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span class="sr-only">Destacado: {{ t.codigo }}</span>
+            </button>
+
+            @if (ordenable()) {
+              <button
+                type="button"
+                class="icono"
+                [disabled]="primero || ocupado(t.id)"
+                (click)="mover(t, -1)"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 15l6-6 6 6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span class="sr-only">Subir {{ t.codigo }}</span>
+              </button>
+              <button
+                type="button"
+                class="icono"
+                [disabled]="ultimo || ocupado(t.id)"
+                (click)="mover(t, 1)"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span class="sr-only">Bajar {{ t.codigo }}</span>
+              </button>
+            }
+          </div>
+        </li>
+      }
+    </ol>
+  }
+</section>

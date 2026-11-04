@@ -10,6 +10,15 @@ export const serverRoutes: ServerRoute[] = [
     getPrerenderParams: async () => copia.trabajos.map((t) => ({ id: t.id.toLowerCase() })),
   },
   {
+    // El panel no se prerenderiza: depende de la sesión y no debe aparecer en el sitio publicado.
+    path: 'admin/**',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'admin',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: '**',
     renderMode: RenderMode.Prerender,
   },

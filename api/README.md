@@ -34,6 +34,12 @@ export PHP=/Applications/MAMP/bin/php/1.php8.3.14/bin/php
    $PHP bin/cake.php seeds run Ajustes
    ```
 
+4. Crea una cuenta para el panel (la contraseña se pide sin mostrarse, mínimo 10 caracteres):
+   ```sh
+   $PHP bin/cake.php usuario crear ivonne@correo.com "Ivonne"
+   ```
+   Para cambiarla: `$PHP bin/cake.php usuario contrasena ivonne@correo.com`.
+
 `config/app_local.php` (no se sube a git) tiene la conexión. Si no existe, cópialo de
 `config/app_local.example.php`.
 
@@ -62,6 +68,38 @@ proxy de Angular quitará el prefijo.
 | GET | `/catalogo/{codigo}` | `{trabajo}`; el código no distingue mayúsculas (`ni-25`) |
 | GET | `/disenos/{codigo}` | HTML: el sitio (`Sitio.shell`) con las meta tags del diseño; 404 si no existe o está oculto |
 | GET | `/sitemap.xml` | XML con el inicio y todos los diseños visibles |
+
+### Panel
+
+Piden sesión (401 sin ella). Los `POST`, `PATCH`, `PUT` y `DELETE` piden además la cabecera
+`X-CSRF-Token` con el token de `/auth/sesion` (403 sin él): la cookie CSRF vive en `/api` y el panel
+no puede leerla.
+
+| Método | Ruta | Qué hace |
+|---|---|---|
+| GET | `/auth/sesion` | `{usuario \| null, csrfToken}` |
+| POST | `/auth/login` | `{email, password}` → `{usuario, csrfToken}`; 401 si no coinciden, 429 tras 5 intentos fallidos (por IP o correo, 15 min) |
+| POST | `/auth/logout` | Cierra la sesión |
+| GET | `/admin/catalogo` | `{categorias, trabajos}` con todos los diseños, también los ocultos |
+| POST | `/admin/trabajos` | Multipart: `foto`, `titulo`, `alt`, `categoria` (slug), `destacado`, `visible`. 201 con `{trabajo}` |
+| PATCH | `/admin/trabajos/{id}` | Cambia `titulo`, `alt`, `categoria`, `destacado` o `visible` |
+| PUT | `/admin/trabajos/orden` | `{ids: [...]}`: el orden nuevo; los que falten quedan al final |
+| DELETE | `/admin/trabajos/{id}` | Borra el diseño y, si su foto se subió desde el panel, sus archivos |
+
+Los errores de datos responden 422 con `{message, errores: {campo: mensaje}}`, en español y listos
+para mostrarse.
+
+### Fotos del panel
+
+`ProcesadorFotos` hace lo mismo que `scripts/fotos.sh`: WebP de 480, 960 y 1440 px (sin ampliar),
+JPEG de 800 px para WhatsApp, orientación según el EXIF y sin metadatos. Se guardan en `Fotos.dir`
+(`web/` y `og/`) y se publican en `Fotos.url`:
+
+- Producción: `public_html/fotos/trabajos`, servida en `/fotos/trabajos`.
+- Local: `api/webroot/fotos/trabajos`, servida en `/api/fotos/trabajos` (no se sube a git).
+
+Una foto de 12 MP necesita unos 150 MB de memoria; el procesador sube `memory_limit` a 256 MB solo
+mientras la procesa. El panel la reduce a 2400 px antes de subirla.
 
 `/disenos/{codigo}` y `/sitemap.xml` los pide el `.htaccess` del sitio en Hostinger, no Angular.
 `Sitio.shell` es la ruta al `index.csr.html` compilado: en producción, `public_html/index.csr.html`
@@ -99,3 +137,7 @@ Pendiente de definir al rentar el hosting. Lo que ya se sabe:
 
 - Configurar `APP_FULL_BASE_URL` con el dominio: en producción la API rechaza peticiones a otro host.
 - Poner `debug` en `false` y los datos de MySQL de Hostinger en `config/app_local.php`.
+- `tmp/` debe poder escribirse: ahí viven las sesiones del panel y el conteo de intentos.
+- **No borrar `public_html/fotos/` al publicar una versión nueva**: ahí están las fotos que subió
+  Ivonne, y no están en git ni en el build.
+- Crear la cuenta de Ivonne con `bin/cake usuario crear` por SSH.

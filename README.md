@@ -56,8 +56,9 @@ Los diseños están en MySQL (tabla `trabajos`) y la API los entrega en `GET /ap
   `src/app/data/catalogo.json` (se sube a git). Con esa copia se prerenderiza una página por
   diseño, con su SEO y su vista previa para WhatsApp, y es lo primero que ve la clienta.
   - `API_URL` elige la API (por defecto `http://127.0.0.1:8765`, la local).
-  - Si la API no responde se usa la copia guardada. Para publicar usa `CATALOGO_ESTRICTO=1`,
-    así el build falla en lugar de salir con un catálogo viejo.
+  - Si la API no responde se usa la copia guardada. Para publicar usa la API de producción con
+    `CATALOGO_ESTRICTO=1`, así el build falla en lugar de salir con un catálogo viejo (o con las
+    fotos de prueba de tu computadora).
 - **En el navegador**, `CatalogoService` pide el catálogo fresco a `/api/catalogo` después
   del primer render. Lo que se agregue u oculte en la base aparece **sin volver a compilar**.
 - **Un diseño nuevo** no tiene página prerenderizada. En Hostinger, el `.htaccess` manda
@@ -70,15 +71,26 @@ Los diseños están en MySQL (tabla `trabajos`) y la API los entrega en `GET /ap
 La portada y la foto de "Experiencia" se eligen por código en `SITE.fotos`
 (`site.config.ts`). Si alguno se oculta, se usa otro diseño.
 
-### Agregar una foto (hasta que exista el panel)
+## Panel de Ivonne (`/admin`)
 
-1. Copia el original a `public/images/trabajos/` (los originales no se publican).
-2. Ejecuta `npm run fotos -- "public/images/trabajos/<archivo>" ni-37` (requiere
-   `brew install webp`). Crea las versiones en `public/images/trabajos/web/` y la vista previa
-   para WhatsApp en `public/images/trabajos/og/`.
-3. Ejecuta en MySQL el `INSERT` que imprime, con título, categoría y un texto alternativo que
-   describa la foto. `orden` define la posición en el catálogo y `destacado = 1` la muestra en
-   destacados.
+Desde el celular o la computadora, Ivonne:
+
+- **agrega diseños** con una foto de la galería o la cámara. El navegador la reduce antes de
+  subirla y el servidor genera las WebP y la vista previa para WhatsApp. El diseño nuevo recibe
+  el siguiente código (`NI-37`) y aparece primero;
+- **muestra u oculta** cada diseño, lo marca como **destacado** y **cambia el orden**;
+- **edita** título, descripción y categoría, o **borra** un diseño.
+
+Los cambios se ven en el sitio al recargar, sin compilar.
+
+- La cuenta se crea en el servidor con `bin/cake usuario crear <correo> "<nombre>"`; la
+  contraseña se pide sin mostrarse (ver [`api/README.md`](api/README.md)).
+- La sesión dura 30 días sin actividad. Después de 5 intentos fallidos hay que esperar 15 minutos.
+- El panel no se prerenderiza, no se indexa (`noindex` y `robots.txt`) y su código solo lo
+  descarga quien entra a `/admin`.
+
+`npm run fotos` sigue sirviendo para preparar fotos a mano (imprime el `INSERT` para MySQL),
+pero el camino normal es el panel.
 
 ## Identidad visual
 

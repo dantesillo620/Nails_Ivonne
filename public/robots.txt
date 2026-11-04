@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /admin
 
 # TODO: actualizar con el dominio definitivo
 Sitemap: https://nails-ivonne.vercel.app/sitemap.xml

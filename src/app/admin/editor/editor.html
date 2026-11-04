@@ -1,0 +1,185 @@
+<a class="volver" routerLink="/admin">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+  Catálogo
+</a>
+
+@if (cargaError()) {
+  <p class="error" role="alert">{{ cargaError() }}</p>
+} @else if (noExiste()) {
+  <h1>Este diseño ya no existe</h1>
+  <p class="ayuda">Puede que se haya borrado. <a routerLink="/admin">Volver al catálogo</a></p>
+} @else if (!nuevo() && !trabajo()) {
+  <p class="ayuda">Cargando…</p>
+} @else {
+  <h1>
+    @if (nuevo()) {
+      Nuevo diseño
+    } @else {
+      Editar {{ trabajo()!.codigo }}
+    }
+  </h1>
+
+  <form class="formulario" (submit)="guardar($event)" novalidate>
+    <div class="columna-foto">
+      @if (nuevo()) {
+        <label
+          for="campo-foto"
+          class="selector-foto"
+          [class.con-foto]="vistaPrevia()"
+          [class.invalido]="errores()['foto']"
+        >
+          @if (vistaPrevia(); as src) {
+            <img [src]="src" alt="Vista previa de la foto elegida" />
+            <span class="cambiar">Cambiar foto</span>
+          } @else {
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 8h3l2-3h6l2 3h3v11H4z" stroke-linejoin="round" />
+              <circle cx="12" cy="13" r="3.5" />
+            </svg>
+            <span class="elige">Elegir foto</span>
+            <span class="ayuda">De la galería o con la cámara</span>
+          }
+        </label>
+        <input
+          id="campo-foto"
+          class="sr-only"
+          type="file"
+          accept="image/*"
+          (change)="elegirFoto($event)"
+          [attr.aria-invalid]="errores()['foto'] ? true : null"
+          [attr.aria-describedby]="errores()['foto'] ? 'error-foto' : null"
+        />
+        @if (errores()['foto']; as e) {
+          <p id="error-foto" class="error-campo">{{ e }}</p>
+        }
+        <p class="ayuda">
+          Una foto real y bien iluminada. Se reduce en tu celular antes de subirla y se le quitan
+          los datos de ubicación.
+        </p>
+      } @else {
+        <figure class="foto-actual">
+          <img
+            [src]="miniatura(trabajo()!)"
+            [width]="trabajo()!.imagen.width"
+            [height]="trabajo()!.imagen.height"
+            [alt]="trabajo()!.alt"
+          />
+        </figure>
+        @if (trabajo()!.visible) {
+          <a class="enlace" [href]="ruta(trabajo()!.codigo)" target="_blank" rel="noopener">
+            Ver en el sitio<span class="sr-only"> (abre otra pestaña)</span>
+          </a>
+        }
+      }
+    </div>
+
+    <div class="columna-datos">
+      <div class="campo">
+        <label for="campo-titulo">Título</label>
+        <input
+          id="campo-titulo"
+          type="text"
+          [maxLength]="maxTitulo"
+          autocomplete="off"
+          enterkeyhint="next"
+          placeholder="Ej. Francés con brillo"
+          [value]="titulo()"
+          (input)="titulo.set(texto($event)); quitarError('titulo')"
+          [attr.aria-invalid]="errores()['titulo'] ? true : null"
+          [attr.aria-describedby]="errores()['titulo'] ? 'error-titulo' : null"
+        />
+        @if (errores()['titulo']; as e) {
+          <p id="error-titulo" class="error-campo">{{ e }}</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="campo-alt">Qué se ve en la foto</label>
+        <textarea
+          id="campo-alt"
+          rows="3"
+          [maxLength]="maxAlt"
+          placeholder="Ej. Uñas almendradas en nude con puntas francesas blancas y brillo."
+          [value]="alt()"
+          (input)="alt.set(texto($event)); quitarError('alt')"
+          [attr.aria-invalid]="errores()['alt'] ? true : null"
+          aria-describedby="ayuda-alt"
+        ></textarea>
+        @if (errores()['alt']; as e) {
+          <p class="error-campo">{{ e }}</p>
+        }
+        <p id="ayuda-alt" class="ayuda">
+          Forma, color y detalles. Lo leen las personas que no pueden ver la foto y también Google.
+          <span class="contador">{{ alt().length }}/{{ maxAlt }}</span>
+        </p>
+      </div>
+
+      <div class="campo">
+        <label for="campo-categoria">Categoría</label>
+        <select
+          id="campo-categoria"
+          [value]="categoria()"
+          (change)="categoria.set(texto($event)); quitarError('categoria')"
+        >
+          <option value="">Sin categoría</option>
+          @for (c of catalogo.categorias(); track c.id) {
+            <option [value]="c.id" [selected]="c.id === categoria()">{{ c.nombre }}</option>
+          }
+        </select>
+        @if (errores()['categoria']; as e) {
+          <p class="error-campo">{{ e }}</p>
+        }
+      </div>
+
+      <fieldset class="campo opciones">
+        <legend class="sr-only">Opciones</legend>
+        <label class="opcion">
+          <input type="checkbox" [checked]="visible()" (change)="visible.set(marcado($event))" />
+          <span>
+            <strong>En el sitio</strong>
+            <span class="ayuda">Si lo desactivas, se guarda pero nadie lo ve.</span>
+          </span>
+        </label>
+        <label class="opcion">
+          <input
+            type="checkbox"
+            [checked]="destacado()"
+            (change)="destacado.set(marcado($event))"
+          />
+          <span>
+            <strong>Destacado</strong>
+            <span class="ayuda">Aparece en "Trabajos destacados", al inicio de la página.</span>
+          </span>
+        </label>
+      </fieldset>
+
+      <p id="error-editor" class="error" role="alert" tabindex="-1">{{ error() }}</p>
+
+      <div class="botones">
+        <button type="submit" class="btn btn-primario" [disabled]="guardando() || borrando()">
+          @if (guardando()) {
+            {{ nuevo() ? 'Subiendo foto…' : 'Guardando…' }}
+          } @else {
+            {{ nuevo() ? 'Publicar diseño' : 'Guardar cambios' }}
+          }
+        </button>
+        <a class="btn btn-secundario" routerLink="/admin">Cancelar</a>
+      </div>
+
+      @if (!nuevo()) {
+        <div class="zona-borrar">
+          <button
+            type="button"
+            class="borrar"
+            (click)="borrar()"
+            [disabled]="guardando() || borrando()"
+          >
+            {{ borrando() ? 'Borrando…' : 'Borrar este diseño' }}
+          </button>
+        </div>
+      }
+    </div>
+  </form>
+}

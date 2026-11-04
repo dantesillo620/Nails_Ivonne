@@ -22,6 +22,11 @@ export const routes: Routes = [
   },
   disenoRoute,
   {
+    // Panel de Ivonne: carga aparte, solo quien entra al panel descarga su código.
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.routes').then((m) => m.ADMIN_ROUTES),
+  },
+  {
     path: '**',
     title: 'Página no encontrada',
     loadComponent: () => import('./pages/not-found/not-found'),
