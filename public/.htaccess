@@ -1,16 +1,27 @@
 # Configuración para Apache (Hostinger hosting compartido / MAMP).
-# Sirve las páginas prerenderizadas y manda las rutas desconocidas a la app.
+# Sirve las páginas prerenderizadas, manda a la API lo que necesita datos al
+# momento y deja las demás rutas a la app Angular.
+#
+# La API (CakePHP) vive en /api: tiene su propio .htaccess y estas reglas no la tocan.
 Options -Indexes
 DirectorySlash Off
 RewriteEngine On
 
+# Sitemap con todos los diseños visibles, también los agregados desde el panel.
+RewriteRule ^sitemap\.xml$ api/sitemap.xml [L]
+
 # /servicios/ -> /servicios (una sola URL por página, igual que el canonical)
 RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{REQUEST_URI} !^/api(/|$)
 RewriteRule ^(.+)/$ /$1 [R=301,L]
 
 # /servicios -> servicios/index.html (página prerenderizada)
 RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
 RewriteRule ^(.+)$ $1/index.html [L]
+
+# Diseño sin página prerenderizada (nuevo desde el panel): la API devuelve el sitio
+# con su título y su foto en las meta tags, para la vista previa de WhatsApp y Google.
+RewriteRule ^disenos/([A-Za-z0-9-]+)$ api/disenos/$1 [L]
 
 # Cualquier otra ruta inexistente -> la app Angular (muestra la página 404)
 RewriteCond %{REQUEST_FILENAME} !-f

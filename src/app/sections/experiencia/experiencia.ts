@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { CatalogoService } from '../../core/catalogo.service';
 import { SITE } from '../../core/site.config';
-import { FOTO_EXPERIENCIA } from '../../data/trabajos';
 import { Foto } from '../../shared/foto';
 import { Reveal } from '../../shared/reveal';
 
@@ -13,5 +13,5 @@ import { Reveal } from '../../shared/reveal';
 })
 export class Experiencia {
   protected readonly textos = SITE.textos.experiencia;
-  protected readonly foto = FOTO_EXPERIENCIA;
+  protected readonly foto = inject(CatalogoService).experiencia;
 }

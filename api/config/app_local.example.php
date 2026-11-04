@@ -37,6 +37,13 @@ return [
      *
      * See app.php for more configuration options.
      */
+    /*
+     * En local el sitio compilado está en dist/ (npm run build).
+     */
+    'Sitio' => [
+        'shell' => dirname(ROOT) . '/dist/nails-ivonne/browser/index.csr.html',
+    ],
+
     'Datasources' => [
         'default' => [
             'host' => '127.0.0.1',

@@ -11,7 +11,7 @@
     </header>
 
     <div class="filtros" role="group" aria-label="Filtrar diseños por estilo" appReveal>
-      @for (f of filtros; track f.id) {
+      @for (f of filtros(); track f.id) {
         <button
           type="button"
           class="filtro"

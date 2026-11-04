@@ -45,6 +45,33 @@ class Trabajo extends Entity
     }
 
     /**
+     * Ruta de la página del diseño: 'NI-25' -> '/disenos/ni-25' (rutaDiseno() del front).
+     *
+     * @return string
+     */
+    public function ruta(): string
+    {
+        return '/disenos/' . strtolower($this->codigo);
+    }
+
+    /**
+     * JPEG para la vista previa en WhatsApp y redes, con la misma regla que
+     * imagenCompartir() del front: '/images/trabajos/web/ni-25' -> '/images/trabajos/og/ni-25.jpg'.
+     *
+     * @return array{src: string, width: int, height: int}
+     */
+    public function imagenCompartir(): array
+    {
+        $ancho = min(800, $this->imagen_ancho);
+
+        return [
+            'src' => preg_replace('#/web/([^/]+)$#', '/og/$1', $this->imagen_base) . '.jpg',
+            'width' => $ancho,
+            'height' => (int)round($this->imagen_alto * $ancho / $this->imagen_ancho),
+        ];
+    }
+
+    /**
      * Forma que usa el sitio (interfaz Trabajo de src/app/data/trabajos.ts).
      * Requiere la categoría cargada con contain() para incluir su slug.
      *

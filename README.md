@@ -4,8 +4,8 @@ Sitio web de Nails Ivonne hecho con Angular 22 y **prerenderizado (SSG)**: la p�
 genera como HTML estático con su SEO incluido y se puede publicar en Vercel o en cualquier
 hosting (Hostinger, Apache).
 
-El backend (CakePHP 5 + MySQL) está en [`api/`](api/README.md). Por ahora solo guarda el
-catálogo; el sitio todavía lee los diseños de `src/app/data/trabajos.ts`.
+El backend (CakePHP 5 + MySQL) está en [`api/`](api/README.md): el catálogo vive en la base de
+datos y el sitio lo lee de `/api` (ver [Catálogo](#catálogo)).
 
 ## Requisitos
 
@@ -15,8 +15,8 @@ catálogo; el sitio todavía lee los diseños de `src/app/data/trabajos.ts`.
 
 | Comando | Qué hace |
 |---|---|
-| `npm start` | Servidor de desarrollo en http://localhost:4200 |
-| `npm run build` | Genera el sitio en `dist/nails-ivonne/browser` |
+| `npm start` | Servidor de desarrollo en http://localhost:4200; `/api` va a la API local |
+| `npm run build` | Descarga el catálogo de la API y genera el sitio en `dist/nails-ivonne/browser` |
 | `npx ng test` | Ejecuta las pruebas |
 | `npm run fotos -- "<archivo>" ni-37` | Genera las copias WebP y la vista previa JPEG de una foto nueva (macOS) |
 
@@ -48,19 +48,37 @@ Todo está en **`src/app/core/site.config.ts`**:
   de cada diseño (`/disenos/ni-25`). WhatsApp muestra la foto como vista previa del enlace.
 - Si `contacto.whatsapp` queda vacío, la agenda y los botones de elegir se ocultan.
 
-## Agregar fotos al catálogo
+## Catálogo
+
+Los diseños están en MySQL (tabla `trabajos`) y la API los entrega en `GET /api/catalogo`.
+
+- **Al compilar**, `scripts/catalogo.mjs` descarga el catálogo y lo guarda en
+  `src/app/data/catalogo.json` (se sube a git). Con esa copia se prerenderiza una página por
+  diseño, con su SEO y su vista previa para WhatsApp, y es lo primero que ve la clienta.
+  - `API_URL` elige la API (por defecto `http://127.0.0.1:8765`, la local).
+  - Si la API no responde se usa la copia guardada. Para publicar usa `CATALOGO_ESTRICTO=1`,
+    así el build falla en lugar de salir con un catálogo viejo.
+- **En el navegador**, `CatalogoService` pide el catálogo fresco a `/api/catalogo` después
+  del primer render. Lo que se agregue u oculte en la base aparece **sin volver a compilar**.
+- **Un diseño nuevo** no tiene página prerenderizada. En Hostinger, el `.htaccess` manda
+  `/disenos/ni-37` a la API, que devuelve el sitio con el título y la foto del diseño en las meta
+  tags (WhatsApp y Google no ejecutan JavaScript). Lo mismo con `/sitemap.xml`, que incluye
+  todos los diseños visibles.
+- **Un diseño oculto** que todavía tiene página prerenderizada pasa a la página 404 en cuanto
+  llega el catálogo fresco. Desaparece del todo con el siguiente build.
+
+La portada y la foto de "Experiencia" se eligen por código en `SITE.fotos`
+(`site.config.ts`). Si alguno se oculta, se usa otro diseño.
+
+### Agregar una foto (hasta que exista el panel)
 
 1. Copia el original a `public/images/trabajos/` (los originales no se publican).
 2. Ejecuta `npm run fotos -- "public/images/trabajos/<archivo>" ni-37` (requiere
-   `brew install webp`). Crea las versiones en `public/images/trabajos/web/`.
-   También crea la vista previa para WhatsApp en `public/images/trabajos/og/`.
-3. Pega la línea que imprime en `TRABAJOS` (`src/app/data/trabajos.ts`) y completa
-   título, categoría (`clasicos`, `brillo` o `arte`) y un texto alternativo que describa la foto.
-   Su página `/disenos/ni-37` y su entrada en `sitemap.xml` se generan solas al compilar.
-4. Para mostrarla en destacados, agrega `destacado: true`.
-
-El orden del arreglo `TRABAJOS` es el orden del catálogo. La foto de portada y la de
-"Experiencia" se eligen al final del mismo archivo.
+   `brew install webp`). Crea las versiones en `public/images/trabajos/web/` y la vista previa
+   para WhatsApp en `public/images/trabajos/og/`.
+3. Ejecuta en MySQL el `INSERT` que imprime, con título, categoría y un texto alternativo que
+   describa la foto. `orden` define la posición en el catálogo y `destacado = 1` la muestra en
+   destacados.
 
 ## Identidad visual
 
@@ -90,10 +108,21 @@ src/app/
   pages/         inicio, página de cada diseño y 404
 ```
 
+## Desarrollo local
+
+1. Enciende MySQL en MAMP y levanta la API (ver [`api/README.md`](api/README.md)):
+   `cd api && $PHP /opt/homebrew/bin/composer serve`.
+2. En otra terminal, `npm start`. El proxy (`proxy.conf.json`) manda `/api/*` a la API.
+
+Sin la API el sitio también funciona: muestra la copia de `catalogo.json`.
+
 ## Despliegue
 
-- **Vercel:** configurado en `vercel.json`; solo conecta el repositorio.
 - **Hostinger (hosting compartido):** sube el contenido de `dist/nails-ivonne/browser` a
-  `public_html`. El `.htaccess` incluido maneja las URLs.
+  `public_html` y la API a `public_html/api`. El `.htaccess` del sitio sirve las páginas
+  prerenderizadas y manda a la API los diseños nuevos y el sitemap. Los pasos completos se
+  definirán al rentar el hosting.
+- **Vercel:** `vercel.json` sigue sirviendo el sitio estático, pero Vercel no ejecuta PHP:
+  sin la API no hay catálogo fresco ni páginas para los diseños nuevos.
 - **SSR más adelante:** cambia `"outputMode"` a `"server"` en `angular.json` y define
   `RenderMode.Server` en `src/app/app.routes.server.ts` (necesita un hosting con Node.js).

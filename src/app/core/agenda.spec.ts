@@ -1,4 +1,4 @@
-import { TRABAJOS } from '../data/trabajos';
+import { CATALOGO_COMPILADO } from './catalogo.service';
 import { formatoHora, generarSemanas, mensajeCita } from './agenda';
 import { SITE } from './site.config';
 
@@ -79,7 +79,7 @@ describe('agenda', () => {
       nombre: ' Ana ',
       fecha: new Date(2026, 10, 10),
       hora: '16:00',
-      disenos: [TRABAJOS.find((t) => t.id === 'NI-25')!],
+      disenos: [CATALOGO_COMPILADO.trabajos.find((t) => t.id === 'NI-25')!],
       nota: '',
     });
     expect(msg).toContain('Nombre: Ana\n');

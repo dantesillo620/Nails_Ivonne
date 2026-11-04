@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { CatalogoService } from '../../core/catalogo.service';
 import { whatsappNumero } from '../../core/contacto';
 import { SITE } from '../../core/site.config';
-import { PORTADA } from '../../data/trabajos';
 import { Foto } from '../../shared/foto';
 
 @Component({
@@ -14,6 +14,6 @@ import { Foto } from '../../shared/foto';
 })
 export class Hero {
   protected readonly textos = SITE.textos.hero;
-  protected readonly portada = PORTADA;
+  protected readonly portada = inject(CatalogoService).portada;
   protected readonly agenda = whatsappNumero() !== null;
 }

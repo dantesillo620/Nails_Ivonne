@@ -1,0 +1,599 @@
+{
+  "categorias": [
+    {
+      "id": "clasicos",
+      "nombre": "Nude y francés"
+    },
+    {
+      "id": "brillo",
+      "nombre": "Brillo y dorado"
+    },
+    {
+      "id": "arte",
+      "nombre": "Arte y color"
+    }
+  ],
+  "trabajos": [
+    {
+      "id": "NI-02",
+      "titulo": "Vino con dije dorado",
+      "alt": "Uñas cuadradas en color vino; una de ellas en tono nude con un dije dorado.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-02",
+        "width": 3024,
+        "height": 4032,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "brillo",
+      "destacado": true
+    },
+    {
+      "id": "NI-25",
+      "titulo": "Conchas y perla",
+      "alt": "Uñas almendradas con conchas en relieve en tono durazno y uñas azul perla con marco dorado.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-25",
+        "width": 2066,
+        "height": 3672,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte",
+      "destacado": true
+    },
+    {
+      "id": "NI-32",
+      "titulo": "Gris con marco dorado",
+      "alt": "Uñas almendradas en gris humo y nude con bordes dorados.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-32",
+        "width": 899,
+        "height": 979,
+        "widths": [
+          480,
+          899
+        ]
+      },
+      "categoria": "brillo",
+      "destacado": true
+    },
+    {
+      "id": "NI-14",
+      "titulo": "Blanco y dorado",
+      "alt": "Uñas almendradas con francés blanco y detalles dorados en relieve.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-14",
+        "width": 3840,
+        "height": 5120,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "brillo",
+      "destacado": true
+    },
+    {
+      "id": "NI-35",
+      "titulo": "Gemas de colores",
+      "alt": "Uñas almendradas con lunares negros y gemas de colores en verde, morado y rosa.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-35",
+        "width": 2442,
+        "height": 2830,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte",
+      "destacado": true
+    },
+    {
+      "id": "NI-29",
+      "titulo": "Moños y francés rosa",
+      "alt": "Uñas almendradas en rosa con francés blanco, moños en relieve y pequeñas piedras.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-29",
+        "width": 3024,
+        "height": 4032,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte",
+      "destacado": true
+    },
+    {
+      "id": "NI-05",
+      "titulo": "Nude natural",
+      "alt": "Uñas almendradas en tono nude con acabado brillante, bajo la luz de una lámpara.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-05",
+        "width": 3024,
+        "height": 4032,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "clasicos"
+    },
+    {
+      "id": "NI-21",
+      "titulo": "Francés dorado fino",
+      "alt": "Uñas almendradas en tono nude con una línea dorada fina en la punta.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-21",
+        "width": 3024,
+        "height": 4032,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "clasicos"
+    },
+    {
+      "id": "NI-12",
+      "titulo": "Francés de lunares con flor",
+      "alt": "Uñas almendradas con puntas blancas de lunares negros y flores en relieve con centro dorado.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-12",
+        "width": 2066,
+        "height": 3672,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-13",
+      "titulo": "Rosa brillante y dorado",
+      "alt": "Uñas cuadradas en rosa con brillo y puntas doradas texturizadas.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-13",
+        "width": 3840,
+        "height": 5120,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "brillo"
+    },
+    {
+      "id": "NI-36",
+      "titulo": "Mix de dibujos",
+      "alt": "Uñas almendradas con un diseño distinto en cada una: fresa, osito, flor y lunares.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-36",
+        "width": 2575,
+        "height": 2717,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-06",
+      "titulo": "Francés negro",
+      "alt": "Uñas almendradas en tono nude con puntas francesas en negro.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-06",
+        "width": 2066,
+        "height": 3672,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "clasicos"
+    },
+    {
+      "id": "NI-26",
+      "titulo": "Nude con relieves dorados",
+      "alt": "Uñas almendradas en nude y rosa con detalles dorados y pequeñas esferas.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-26",
+        "width": 3024,
+        "height": 4032,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "brillo"
+    },
+    {
+      "id": "NI-18",
+      "titulo": "Corazones rosas",
+      "alt": "Uñas almendradas en rosa con puntas fucsia y corazones delineados en blanco.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-18",
+        "width": 3840,
+        "height": 5120,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-08",
+      "titulo": "Plata con perlas",
+      "alt": "Uñas cuadradas con brillo plateado y pequeñas perlas en relieve.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-08",
+        "width": 3840,
+        "height": 5120,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "brillo"
+    },
+    {
+      "id": "NI-10",
+      "titulo": "Francés blanco",
+      "alt": "Uñas cuadradas con francés blanco clásico sobre base rosada.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-10",
+        "width": 3840,
+        "height": 5120,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "clasicos"
+    },
+    {
+      "id": "NI-34",
+      "titulo": "Lunares de colores",
+      "alt": "Uñas almendradas en nude con lunares negros y piedras de colores.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-34",
+        "width": 1011,
+        "height": 1143,
+        "widths": [
+          480,
+          960,
+          1011
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-11",
+      "titulo": "Moño y corazones",
+      "alt": "Uñas cuadradas en rosa con brillo, un moño dorado, corazones rojos y un corazón dorado.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-11",
+        "width": 3840,
+        "height": 5120,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-04",
+      "titulo": "Destellos iridiscentes",
+      "alt": "Uñas almendradas largas con destellos iridiscentes en tonos rosa y verde.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-04",
+        "width": 1980,
+        "height": 3520,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "brillo"
+    },
+    {
+      "id": "NI-20",
+      "titulo": "Blanco lechoso",
+      "alt": "Uñas almendradas en blanco lechoso con acabado brillante.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-20",
+        "width": 3840,
+        "height": 5120,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "clasicos"
+    },
+    {
+      "id": "NI-03",
+      "titulo": "Nude con estrellas rosas",
+      "alt": "Uñas cuadradas largas en tono nude con estrellas rosas, puntas metálicas y líneas finas.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-03",
+        "width": 3024,
+        "height": 4032,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-23",
+      "titulo": "Rojo con lunares",
+      "alt": "Uñas almendradas en rojo, rosa y nude con lunares blancos y detalles dorados.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-23",
+        "width": 3840,
+        "height": 5120,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-33",
+      "titulo": "Rosa con relieves dorados",
+      "alt": "Uñas en rosa con piedras y detalles dorados en relieve.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-33",
+        "width": 3345,
+        "height": 4073,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "brillo"
+    },
+    {
+      "id": "NI-01",
+      "titulo": "Francés fucsia con detalles",
+      "alt": "Uñas cortas cuadradas con puntas francesas en rosa fucsia y pequeños detalles blancos.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-01",
+        "width": 3024,
+        "height": 4032,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-31",
+      "titulo": "Brillo con moños",
+      "alt": "Uñas almendradas con brillo, piedras y pequeños moños rosas en relieve.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-31",
+        "width": 3024,
+        "height": 4032,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "brillo"
+    },
+    {
+      "id": "NI-27",
+      "titulo": "Celeste con lunares y rayas",
+      "alt": "Uñas almendradas en azul cielo con lunares negros y rayas.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-27",
+        "width": 3563,
+        "height": 4498,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-09",
+      "titulo": "Azul con líneas plateadas",
+      "alt": "Uñas almendradas en azul rey con líneas y figuras plateadas.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-09",
+        "width": 3024,
+        "height": 4032,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-28",
+      "titulo": "Nude con estrella",
+      "alt": "Uñas almendradas en tono nude; dos de ellas con una estrella blanca.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-28",
+        "width": 3840,
+        "height": 5120,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "clasicos"
+    },
+    {
+      "id": "NI-19",
+      "titulo": "Lunares y plata",
+      "alt": "Uñas almendradas en nude y blanco con lunares negros y detalles plateados.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-19",
+        "width": 3840,
+        "height": 5120,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-30",
+      "titulo": "Nude con textura y oro",
+      "alt": "Uñas cortas en nude con relieves ondulados y puntas doradas.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-30",
+        "width": 3534,
+        "height": 4416,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "brillo"
+    },
+    {
+      "id": "NI-16",
+      "titulo": "Rosa chicle con flor",
+      "alt": "Uñas almendradas en rosa chicle; dos de ellas con una flor blanca.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-16",
+        "width": 3024,
+        "height": 4032,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-22",
+      "titulo": "Azul metálico",
+      "alt": "Uñas cortas en azul con acabado metálico.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-22",
+        "width": 3840,
+        "height": 5120,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "brillo"
+    },
+    {
+      "id": "NI-24",
+      "titulo": "Verde olivo con estrellas",
+      "alt": "Uñas cortas en verde olivo con estrellas blancas.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-24",
+        "width": 2066,
+        "height": 3672,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-15",
+      "titulo": "Blanco con lunares",
+      "alt": "Uñas almendradas en nude y blanco; algunas con lunares oscuros.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-15",
+        "width": 3840,
+        "height": 5120,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-17",
+      "titulo": "Francés amarillo y rosa",
+      "alt": "Uñas cuadradas con puntas francesas en amarillo pastel y rosa.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-17",
+        "width": 2066,
+        "height": 3672,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    },
+    {
+      "id": "NI-07",
+      "titulo": "Rosa con puntos blancos",
+      "alt": "Uñas almendradas en rosa pálido; dos de ellas con pequeños puntos blancos.",
+      "imagen": {
+        "base": "/images/trabajos/web/ni-07",
+        "width": 3840,
+        "height": 5120,
+        "widths": [
+          480,
+          960,
+          1440
+        ]
+      },
+      "categoria": "arte"
+    }
+  ]
+}

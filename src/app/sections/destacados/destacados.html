@@ -9,7 +9,7 @@
     </header>
 
     <ul class="rejilla">
-      @for (t of trabajos; track t.id; let i = $index) {
+      @for (t of trabajos(); track t.id; let i = $index) {
         <li appReveal [style.--i]="i % 3">
           <button
             type="button"

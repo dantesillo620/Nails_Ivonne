@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { CatalogoService } from '../../core/catalogo.service';
 import { SITE } from '../../core/site.config';
-import { TRABAJOS } from '../../data/trabajos';
 import { Foto } from '../../shared/foto';
 import { LightboxService } from '../../shared/lightbox/lightbox.service';
 import { Reveal } from '../../shared/reveal';
@@ -17,9 +17,9 @@ export class Destacados {
   private readonly lightbox = inject(LightboxService);
 
   protected readonly textos = SITE.textos.destacados;
-  protected readonly trabajos = TRABAJOS.filter((t) => t.destacado);
+  protected readonly trabajos = inject(CatalogoService).destacados;
 
   protected abrir(index: number, event: Event): void {
-    this.lightbox.abrir(this.trabajos, index, event.currentTarget as HTMLElement);
+    this.lightbox.abrir(this.trabajos(), index, event.currentTarget as HTMLElement);
   }
 }

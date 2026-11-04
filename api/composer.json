@@ -55,7 +55,7 @@
         "test": "@php vendor/bin/phpunit --colors=always",
         "serve": [
             "Composer\\Config::disableProcessTimeout",
-            "@php -S localhost:8765 -t webroot webroot/index.php"
+            "@php -S 127.0.0.1:8765 -t webroot webroot/index.php"
         ]
     }
 }

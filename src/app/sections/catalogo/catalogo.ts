@@ -8,9 +8,10 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { CatalogoService } from '../../core/catalogo.service';
 import { SeleccionService } from '../../core/seleccion.service';
 import { SITE } from '../../core/site.config';
-import { CATEGORIAS, CategoriaId, TRABAJOS } from '../../data/trabajos';
+import { CategoriaId } from '../../data/trabajos';
 import { Elegir } from '../../shared/elegir/elegir';
 import { Foto } from '../../shared/foto';
 import { LightboxService } from '../../shared/lightbox/lightbox.service';
@@ -30,36 +31,48 @@ const PASO = 12;
 })
 export class Catalogo {
   private readonly lightbox = inject(LightboxService);
+  private readonly catalogo = inject(CatalogoService);
   protected readonly seleccion = inject(SeleccionService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly injector = inject(Injector);
 
   protected readonly textos = SITE.textos.catalogo;
-  protected readonly total = TRABAJOS.length;
 
   /** Solo se muestran filtros de categorías que tienen trabajos. */
-  protected readonly filtros = [
-    { id: 'todos' as Filtro, nombre: 'Todos', cantidad: TRABAJOS.length },
-    ...CATEGORIAS.map((c) => ({
-      id: c.id as Filtro,
-      nombre: c.nombre,
-      cantidad: TRABAJOS.filter((t) => t.categoria === c.id).length,
-    })).filter((f) => f.cantidad > 0),
-  ];
+  protected readonly filtros = computed(() => {
+    const trabajos = this.catalogo.trabajos();
+    return [
+      { id: 'todos' as Filtro, nombre: 'Todos', cantidad: trabajos.length },
+      ...this.catalogo
+        .categorias()
+        .map((c) => ({
+          id: c.id as Filtro,
+          nombre: c.nombre,
+          cantidad: trabajos.filter((t) => t.categoria === c.id).length,
+        }))
+        .filter((f) => f.cantidad > 0),
+    ];
+  });
 
-  protected readonly filtro = signal<Filtro>('todos');
+  private readonly elegido = signal<Filtro>('todos');
+  /** Si la categoría elegida desaparece del catálogo fresco, se vuelve a "Todos". */
+  protected readonly filtro = computed<Filtro>(() => {
+    const f = this.elegido();
+    return this.filtros().some((x) => x.id === f) ? f : 'todos';
+  });
   private readonly limite = signal(PASO);
 
   protected readonly filtrados = computed(() => {
     const f = this.filtro();
-    return f === 'todos' ? TRABAJOS : TRABAJOS.filter((t) => t.categoria === f);
+    const trabajos = this.catalogo.trabajos();
+    return f === 'todos' ? trabajos : trabajos.filter((t) => t.categoria === f);
   });
   protected readonly mostrados = computed(() => this.filtrados().slice(0, this.limite()));
   protected readonly quedan = computed(() => this.filtrados().length - this.mostrados().length);
 
   protected elegir(filtro: Filtro): void {
     if (filtro === this.filtro()) return;
-    this.filtro.set(filtro);
+    this.elegido.set(filtro);
     this.limite.set(PASO);
   }
 

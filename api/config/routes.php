@@ -21,5 +21,11 @@ return function (RouteBuilder $routes): void {
         $builder->get('/catalogo/{codigo}', ['controller' => 'Catalogo', 'action' => 'view'])
             ->setPatterns(['codigo' => '[A-Za-z]{2,4}-\d{2,4}'])
             ->setPass(['codigo']);
+
+        // Páginas del sitio que arma PHP (el .htaccess del sitio las manda aquí en Hostinger).
+        $builder->get('/disenos/{codigo}', ['controller' => 'Sitio', 'action' => 'diseno'])
+            ->setPatterns(['codigo' => '[A-Za-z0-9-]{1,20}'])
+            ->setPass(['codigo']);
+        $builder->get('/sitemap.xml', ['controller' => 'Sitio', 'action' => 'sitemap']);
     });
 };

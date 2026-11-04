@@ -43,7 +43,7 @@ Desde `api/`:
 
 | Comando | Qué hace |
 |---|---|
-| `$PHP /opt/homebrew/bin/composer serve` | API en http://localhost:8765 |
+| `$PHP /opt/homebrew/bin/composer serve` | API en http://127.0.0.1:8765 |
 | `$PHP /opt/homebrew/bin/composer test` | Pruebas (usan SQLite, no necesitan MySQL) |
 | `$PHP /opt/homebrew/bin/composer cs-check` | Revisa el estilo de código de CakePHP |
 | `$PHP bin/cake.php migrations migrate` | Aplica las migraciones pendientes |
@@ -60,6 +60,12 @@ proxy de Angular quitará el prefijo.
 | GET | `/` | `{ok, servicio}`, para comprobar que la API responde |
 | GET | `/catalogo` | `{categorias, trabajos}`, visibles y en orden |
 | GET | `/catalogo/{codigo}` | `{trabajo}`; el código no distingue mayúsculas (`ni-25`) |
+| GET | `/disenos/{codigo}` | HTML: el sitio (`Sitio.shell`) con las meta tags del diseño; 404 si no existe o está oculto |
+| GET | `/sitemap.xml` | XML con el inicio y todos los diseños visibles |
+
+`/disenos/{codigo}` y `/sitemap.xml` los pide el `.htaccess` del sitio en Hostinger, no Angular.
+`Sitio.shell` es la ruta al `index.csr.html` compilado: en producción, `public_html/index.csr.html`
+(la carpeta de arriba de la API); en local, `dist/` según `config/app_local.php`.
 
 `categorias` y `trabajos` usan la misma forma que las interfaces `Categoria` y `Trabajo` de
 `src/app/data/trabajos.ts`. Los errores también son JSON: `{message, url, code}`.

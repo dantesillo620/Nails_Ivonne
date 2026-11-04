@@ -1,6 +1,7 @@
 import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { TRABAJOS, Trabajo } from '../data/trabajos';
+import { Trabajo } from '../data/trabajos';
+import { CatalogoService } from './catalogo.service';
 import { whatsappNumero } from './contacto';
 
 const CLAVE = 'nails-ivonne:seleccion';
@@ -13,6 +14,7 @@ const CLAVE = 'nails-ivonne:seleccion';
 @Injectable({ providedIn: 'root' })
 export class SeleccionService {
   private readonly navegador = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly catalogo = inject(CatalogoService);
 
   /** La selección solo tiene sentido si hay WhatsApp para enviar la solicitud. */
   readonly activa = whatsappNumero() !== null;
@@ -21,7 +23,7 @@ export class SeleccionService {
   /** Diseños elegidos, en el orden en que se eligieron. */
   readonly trabajos = computed<readonly Trabajo[]>(() =>
     this.ids()
-      .map((id) => TRABAJOS.find((t) => t.id === id))
+      .map((id) => this.catalogo.buscar(id))
       .filter((t): t is Trabajo => !!t),
   );
   readonly cantidad = computed(() => this.trabajos().length);
@@ -34,9 +36,9 @@ export class SeleccionService {
     if (!this.navegador) return;
     try {
       const guardado = JSON.parse(localStorage.getItem(CLAVE) ?? '[]');
-      if (Array.isArray(guardado)) {
-        this.ids.set(guardado.filter((id) => typeof id === 'string' && TRABAJOS.some((t) => t.id === id)));
-      }
+      // Se conservan todos: un diseño nuevo puede no estar en la copia de compilación
+      // y aparecer cuando llega el catálogo fresco. `trabajos` ignora los que no existen.
+      if (Array.isArray(guardado)) this.ids.set(guardado.filter((id) => typeof id === 'string'));
     } catch {
       /* almacenamiento bloqueado o dato inválido: se empieza vacío */
     }

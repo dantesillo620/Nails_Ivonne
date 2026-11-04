@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, afterNextRender, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { CatalogoService } from './core/catalogo.service';
 import { SeleccionService } from './core/seleccion.service';
 import { BarraSeleccion } from './layout/barra-seleccion/barra-seleccion';
 import { SiteFooter } from './layout/site-footer/site-footer';
@@ -34,6 +35,11 @@ import { SiteHeader } from './layout/site-header/site-header';
 export class App {
   constructor() {
     const seleccion = inject(SeleccionService);
-    afterNextRender(() => seleccion.restaurar());
+    const catalogo = inject(CatalogoService);
+    // Después del primer render, para no alterar el HTML prerenderizado durante la hidratación.
+    afterNextRender(() => {
+      void catalogo.actualizar();
+      seleccion.restaurar();
+    });
   }
 }

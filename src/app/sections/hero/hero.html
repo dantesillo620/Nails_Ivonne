@@ -33,8 +33,8 @@
 
       <figure class="principal">
         <app-foto
-          [imagen]="portada.principal.imagen"
-          [alt]="portada.principal.alt"
+          [imagen]="portada().principal.imagen"
+          [alt]="portada().principal.alt"
           sizes="(min-width: 960px) 40vw, 88vw"
           [prioridad]="true"
         />
@@ -42,15 +42,15 @@
 
       <figure class="secundaria">
         <app-foto
-          [imagen]="portada.secundaria.imagen"
-          [alt]="portada.secundaria.alt"
+          [imagen]="portada().secundaria.imagen"
+          [alt]="portada().secundaria.alt"
           sizes="(min-width: 960px) 16vw, 38vw"
         />
       </figure>
 
       <p class="firma" aria-hidden="true">
         <span>Trabajo real</span>
-        <em>{{ portada.principal.titulo }}</em>
+        <em>{{ portada().principal.titulo }}</em>
       </p>
     </div>
   </div>

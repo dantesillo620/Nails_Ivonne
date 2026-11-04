@@ -6,7 +6,7 @@
 # Crea public/images/trabajos/web/<id>-480.webp, -960.webp y -1440.webp
 # (sin ampliar fotos pequeñas), la vista previa para WhatsApp en
 # public/images/trabajos/og/<id>.jpg (800 px, sin datos EXIF ni ubicación)
-# e imprime la línea para src/app/data/trabajos.ts.
+# e imprime el INSERT para registrar el diseño en MySQL.
 # El original no se modifica. Requiere `sips` (incluido en macOS) y `cwebp`
 # y `dwebp` (brew install webp).
 set -euo pipefail
@@ -53,10 +53,16 @@ dwebp -quiet "$OUT/$ID-$MEDIO.webp" -o "$TMP_DIR/og.png"
 sips -s format jpeg -s formatOptions 78 --resampleWidth "$OG_W" "$TMP_DIR/og.png" --out "public/images/trabajos/og/$ID.jpg" >/dev/null
 echo "  ✓ public/images/trabajos/og/$ID.jpg"
 
-LIST=$(IFS=,; echo "${WIDTHS[*]}" | sed 's/,/, /g')
+LIST=$(IFS=,; echo "${WIDTHS[*]}")
 UPPER="$(echo "$ID" | tr '[:lower:]' '[:upper:]')"
 
 echo
-echo "Pega esta línea en TRABAJOS (src/app/data/trabajos.ts) y completa título, categoría y alt:"
+echo "Registra el diseño en la base de datos (cuando exista el panel, se subirá desde ahí)."
+echo "Completa título, alt y categoría (1 clasicos, 2 brillo, 3 arte) y ejecútalo en MySQL:"
 echo
-echo "  { id: '$UPPER', titulo: 'TÍTULO', categoria: 'arte', alt: 'Describe lo que se ve en la foto.', imagen: foto('$ID', $W, $H, [$LIST]) },"
+echo "  INSERT INTO trabajos (codigo, titulo, alt, categoria_id, destacado, visible, orden,"
+echo "    imagen_base, imagen_ancho, imagen_alto, imagen_anchos, created, modified)"
+echo "  VALUES ('$UPPER', 'TÍTULO', 'Describe lo que se ve en la foto.', 3, 0, 1, 0,"
+echo "    '/images/trabajos/web/$ID', $W, $H, '$LIST', NOW(), NOW());"
+echo
+echo "Aparece en el sitio al recargar; con 'orden' 0 sale primero en el catálogo."

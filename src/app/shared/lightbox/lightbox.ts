@@ -8,9 +8,9 @@ import {
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { CatalogoService } from '../../core/catalogo.service';
 import { whatsappDisenoUrl } from '../../core/contacto';
 import { SeleccionService } from '../../core/seleccion.service';
-import { CATEGORIAS } from '../../data/trabajos';
 import { Elegir } from '../elegir/elegir';
 import { LightboxService } from './lightbox.service';
 
@@ -28,16 +28,16 @@ import { LightboxService } from './lightbox.service';
 })
 export class Lightbox {
   private readonly lb = inject(LightboxService);
+  private readonly catalogo = inject(CatalogoService);
   protected readonly seleccion = inject(SeleccionService);
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
 
   protected readonly trabajo = this.lb.actual;
   protected readonly posicion = computed(() => (this.lb.index() ?? 0) + 1);
   protected readonly total = computed(() => this.lb.items().length);
-  protected readonly categoria = computed(() => {
-    const c = this.trabajo()?.categoria;
-    return CATEGORIAS.find((x) => x.id === c)?.nombre ?? null;
-  });
+  protected readonly categoria = computed(() =>
+    this.catalogo.nombreCategoria(this.trabajo()?.categoria),
+  );
   protected readonly whatsapp = computed(() => {
     const t = this.trabajo();
     return t ? whatsappDisenoUrl(t.titulo, t.id) : null;

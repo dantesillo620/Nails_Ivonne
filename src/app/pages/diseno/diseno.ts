@@ -1,10 +1,21 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, computed, effect, inject, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  computed,
+  effect,
+  inject,
+  input,
+  linkedSignal,
+  untracked,
+} from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { CatalogoService } from '../../core/catalogo.service';
 import { whatsappDisenoUrl } from '../../core/contacto';
 import { SeleccionService } from '../../core/seleccion.service';
 import { SeoService } from '../../core/seo/seo.service';
 import { SITE } from '../../core/site.config';
-import { CATEGORIAS, TRABAJOS, buscarTrabajo, rutaDiseno } from '../../data/trabajos';
+import { Trabajo, rutaDiseno } from '../../data/trabajos';
 import { Elegir } from '../../shared/elegir/elegir';
 
 @Component({
@@ -16,15 +27,22 @@ import { Elegir } from '../../shared/elegir/elegir';
 })
 export default class Diseno implements OnDestroy {
   private readonly seo = inject(SeoService);
+  private readonly catalogo = inject(CatalogoService);
+  private readonly router = inject(Router);
   protected readonly seleccion = inject(SeleccionService);
 
   /** Parámetro :id de la ruta ('ni-25'). */
   readonly id = input.required<string>();
 
-  protected readonly trabajo = computed(() => buscarTrabajo(this.id())!);
-  protected readonly categoria = computed(
-    () => CATEGORIAS.find((c) => c.id === this.trabajo().categoria)?.nombre ?? null,
-  );
+  /**
+   * La ruta solo coincide si el diseño existe. Si el catálogo fresco ya no lo trae
+   * (Ivonne lo ocultó), se conserva el anterior mientras la página pasa al 404.
+   */
+  protected readonly trabajo = linkedSignal<Trabajo | undefined, Trabajo>({
+    source: () => this.catalogo.buscar(this.id()),
+    computation: (actual, previo) => actual ?? previo!.value,
+  });
+  protected readonly categoria = computed(() => this.catalogo.nombreCategoria(this.trabajo().categoria));
   protected readonly whatsapp = computed(() => whatsappDisenoUrl(this.trabajo().titulo, this.trabajo().id));
   protected readonly elegido = computed(() => {
     this.seleccion.trabajos();
@@ -33,9 +51,11 @@ export default class Diseno implements OnDestroy {
 
   /** Diseño anterior y siguiente en el orden del catálogo (circular). */
   protected readonly vecinos = computed(() => {
-    const i = TRABAJOS.indexOf(this.trabajo());
-    const n = TRABAJOS.length;
-    return { anterior: TRABAJOS[(i - 1 + n) % n], siguiente: TRABAJOS[(i + 1) % n] };
+    const lista = this.catalogo.trabajos();
+    const id = this.trabajo().id;
+    const i = Math.max(0, lista.findIndex((t) => t.id === id));
+    const n = lista.length;
+    return { anterior: lista[(i - 1 + n) % n], siguiente: lista[(i + 1) % n] };
   });
 
   protected readonly srcset = computed(() => {
@@ -50,6 +70,13 @@ export default class Diseno implements OnDestroy {
   protected readonly ruta = rutaDiseno;
 
   constructor() {
+    // Diseño oculto o borrado desde el panel: se vuelve a resolver la misma URL, que ahora cae en el 404.
+    effect(() => {
+      if (this.catalogo.actualizado() && !this.catalogo.buscar(this.id())) {
+        untracked(() => void this.router.navigateByUrl(this.router.url, { skipLocationChange: true }));
+      }
+    });
+
     effect(() => {
       const t = this.trabajo();
       this.seo.setJsonLd('breadcrumb', {

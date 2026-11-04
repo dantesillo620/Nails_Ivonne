@@ -30,6 +30,14 @@ export interface SiteConfig {
   locale: string;
   defaultDescription: string;
   defaultImage: string;
+  /** Ruta de la API (CakePHP) en el mismo dominio. En desarrollo la atiende el proxy de Angular. */
+  api: string;
+  /** Diseños que se usan como foto fija; si alguno se oculta, se elige otro. */
+  fotos: {
+    /** Foto principal y secundaria de la portada. */
+    portada: [string, string];
+    experiencia: string;
+  };
   contacto: {
     /**
      * WhatsApp en formato internacional, solo dígitos y sin '+':
@@ -92,6 +100,12 @@ export const SITE: SiteConfig = {
     'Nails Ivonne: diseños de uñas con detalle, desde un nude impecable hasta arte, brillo y dorado. Explora el catálogo y consulta tu cita.',
   // Imagen para compartir en redes (1200×630).
   defaultImage: '/brand/og-nails-ivonne.jpg',
+  api: '/api',
+
+  fotos: {
+    portada: ['NI-05', 'NI-21'],
+    experiencia: 'NI-10',
+  },
 
   contacto: {
     whatsapp: '13855221123',
