@@ -4,6 +4,9 @@ Sitio web de Nails Ivonne hecho con Angular 22 y **prerenderizado (SSG)**: la p�
 genera como HTML estático con su SEO incluido y se puede publicar en Vercel o en cualquier
 hosting (Hostinger, Apache).
 
+El backend (CakePHP 5 + MySQL) está en [`api/`](api/README.md). Por ahora solo guarda el
+catálogo; el sitio todavía lee los diseños de `src/app/data/trabajos.ts`.
+
 ## Requisitos
 
 - Node.js 24 LTS (`nvm use` toma la versión de `.nvmrc`)
