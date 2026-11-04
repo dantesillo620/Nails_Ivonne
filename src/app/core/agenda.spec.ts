@@ -2,8 +2,8 @@ import { CATALOGO_COMPILADO } from './catalogo.service';
 import { formatoHora, generarSemanas, mensajeCita } from './agenda';
 import { SITE } from './site.config';
 
-const entreSemana = ['14:00', '16:00', '18:00'];
-const sabado = ['09:00', '11:00', '13:00', '15:00', '17:00'];
+const entreSemana = ['14:00', '16:00', '18:00', '20:00'];
+const sabado = ['09:00', '11:00', '13:00', '15:00', '17:00', '19:00'];
 const cfg = {
   zonaHoraria: 'America/Mexico_City',
   horas: { 1: entreSemana, 2: entreSemana, 3: entreSemana, 4: entreSemana, 5: entreSemana, 6: sabado },
@@ -41,15 +41,17 @@ describe('agenda', () => {
   });
 
   it('no ofrece días pasados ni horas que ya no alcanzan', () => {
-    // Miércoles a las 17:30: hoy ya no hay horas (18:00 tiene menos de 60 min).
+    // Miércoles a las 17:30: las 18:00 tienen menos de 60 min; queda la de las 20:00.
     const dias = generarSemanas(gdl(2026, 10, 4, 17, 30), cfg).flatMap((s) => s.dias);
     expect(dias.find((d) => d.clave === '2026-11-02')!.horas).toEqual([]);
-    expect(dias.find((d) => d.clave === '2026-11-04')!.horas).toEqual([]);
+    expect(dias.find((d) => d.clave === '2026-11-04')!.horas).toEqual(['20:00']);
     expect(dias.find((d) => d.clave === '2026-11-05')!.horas).toEqual(entreSemana);
 
-    // A las 16:30 todavía se puede pedir a las 18:00; a las 13:00, todo el día.
+    // A las 16:30 todavía se puede pedir a las 18:00; a las 19:30, ya nada; a las 13:00, todo el día.
     const tarde = generarSemanas(gdl(2026, 10, 4, 16, 30), cfg).flatMap((s) => s.dias);
-    expect(tarde.find((d) => d.clave === '2026-11-04')!.horas).toEqual(['18:00']);
+    expect(tarde.find((d) => d.clave === '2026-11-04')!.horas).toEqual(['18:00', '20:00']);
+    const noche = generarSemanas(gdl(2026, 10, 4, 19, 30), cfg).flatMap((s) => s.dias);
+    expect(noche.find((d) => d.clave === '2026-11-04')!.horas).toEqual([]);
     const mediodia = generarSemanas(gdl(2026, 10, 4, 13), cfg).flatMap((s) => s.dias);
     expect(mediodia.find((d) => d.clave === '2026-11-04')!.horas).toEqual(entreSemana);
   });
@@ -57,7 +59,7 @@ describe('agenda', () => {
   it('usa la hora de Guadalajara, no la del dispositivo', () => {
     // 4 de noviembre, 1:30 p. m. en Utah = 2:30 p. m. en Guadalajara: las 2:00 ya pasaron.
     const desdeUtah = generarSemanas(new Date(Date.UTC(2026, 10, 4, 20, 30)), cfg).flatMap((s) => s.dias);
-    expect(desdeUtah.find((d) => d.clave === '2026-11-04')!.horas).toEqual(['16:00', '18:00']);
+    expect(desdeUtah.find((d) => d.clave === '2026-11-04')!.horas).toEqual(['16:00', '18:00', '20:00']);
 
     // 5 de noviembre 03:00 UTC sigue siendo miércoles 4, 9:00 p. m., en Guadalajara.
     const noche = generarSemanas(new Date(Date.UTC(2026, 10, 5, 3, 0)), cfg).flatMap((s) => s.dias);
@@ -66,8 +68,8 @@ describe('agenda', () => {
   });
 
   it('salta a la semana siguiente si la actual ya terminó', () => {
-    // Sábado 7 de noviembre a las 19:00 y domingo 8.
-    for (const ahora of [gdl(2026, 10, 7, 19), gdl(2026, 10, 8, 12)]) {
+    // Sábado 7 de noviembre a las 18:30 (las 19:00 ya no alcanzan) y domingo 8.
+    for (const ahora of [gdl(2026, 10, 7, 18, 30), gdl(2026, 10, 8, 12)]) {
       const semanas = generarSemanas(ahora, cfg);
       expect(semanas[0].dias[0].clave).toBe('2026-11-09');
       expect(semanas[0].dias.every((d) => d.horas.length === d.todas.length)).toBe(true);
