@@ -84,7 +84,7 @@ Reglas que cuida la base, no solo la API:
   horario. CakePHP calcula `ocupa` al guardar.
 - La clienta no puede elegir el estado de su cita: siempre entra como `pendiente`.
 
-`config/seeds/catalogo.json` es el catálogo exportado de `trabajos.ts` el 2026-11-04. Los seeds omiten
+`config/Seeds/catalogo.json` es el catálogo exportado de `trabajos.ts` el 2026-11-04. Los seeds omiten
 lo que ya existe. CakePHP recuerda qué seeds corrieron, así que para repetir uno usa `--force`.
 
 **Por confirmar:** `ajustes.agenda.zonaHoraria` quedó en `America/Denver` (Utah, por la lada 385).

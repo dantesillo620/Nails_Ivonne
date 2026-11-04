@@ -4,7 +4,7 @@ declare(strict_types=1);
 use Migrations\BaseSeed;
 
 /**
- * Carga el catálogo inicial desde config/seeds/catalogo.json
+ * Carga el catálogo inicial desde config/Seeds/catalogo.json
  * (exportado de src/app/data/trabajos.ts del front).
  *
  *   bin/cake seeds run Catalogo
@@ -18,7 +18,7 @@ class CatalogoSeed extends BaseSeed
      */
     public function run(): void
     {
-        $json = file_get_contents(CONFIG . 'seeds' . DS . 'catalogo.json');
+        $json = file_get_contents(CONFIG . 'Seeds' . DS . 'catalogo.json');
         $datos = json_decode((string)$json, true, flags: JSON_THROW_ON_ERROR);
 
         foreach ($datos['categorias'] as $categoria) {
