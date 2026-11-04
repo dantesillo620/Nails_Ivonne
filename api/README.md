@@ -31,6 +31,7 @@ export PHP=/Applications/MAMP/bin/php/1.php8.3.14/bin/php
    $PHP /opt/homebrew/bin/composer install
    $PHP bin/cake.php migrations migrate
    $PHP bin/cake.php seeds run Catalogo
+   $PHP bin/cake.php seeds run Ajustes
    ```
 
 `config/app_local.php` (no se sube a git) tiene la conexión. Si no existe, cópialo de
@@ -65,13 +66,28 @@ proxy de Angular quitará el prefijo.
 
 ## Datos
 
-- `categorias`: `slug` (`clasicos`, `brillo`, `arte`), nombre y orden.
-- `trabajos`: código (`NI-07`), título, texto alternativo, categoría, destacado, visible, orden y la
-  imagen (`imagen_base` más los anchos WebP disponibles).
-- `usuarios`: cuentas del panel. Todavía no se usa.
+| Tabla | Qué guarda |
+|---|---|
+| `categorias` | `slug` (`clasicos`, `brillo`, `arte`), nombre y orden |
+| `trabajos` | Código (`NI-07`), título, texto alternativo, categoría, destacado, visible, orden y la imagen (`imagen_base` más los anchos WebP) |
+| `citas` | Nombre, WhatsApp (solo dígitos), fecha y hora locales, estado (`pendiente`, `confirmada`, `cancelada`) y nota |
+| `citas_trabajos` | Diseños que la clienta eligió para su cita |
+| `bloqueos` | Días u horarios sin atención; `hora` vacía bloquea el día completo |
+| `ajustes` | JSON por clave. `agenda`: días, horas, semanas visibles, anticipación y zona horaria |
+| `usuarios` | Cuentas del panel; la contraseña se guarda como hash |
+| `push_suscripciones` | Dispositivos de cada cuenta que reciben notificaciones |
 
-`config/seeds/catalogo.json` es el catálogo exportado de `trabajos.ts` el 2026-11-04. El seed omite lo
-que ya existe; para volver a correrlo sin duplicar usa `seeds run Catalogo --force`.
+Reglas que cuida la base, no solo la API:
+
+- **No hay dos citas activas en el mismo horario.** El índice único `(fecha, hora, ocupa)` lo impide;
+  `ocupa` vale 1 en citas pendientes o confirmadas y NULL en canceladas, así que cancelar libera el
+  horario. CakePHP calcula `ocupa` al guardar.
+- La clienta no puede elegir el estado de su cita: siempre entra como `pendiente`.
+
+`config/seeds/catalogo.json` es el catálogo exportado de `trabajos.ts` el 2026-11-04. Los seeds omiten
+lo que ya existe. CakePHP recuerda qué seeds corrieron, así que para repetir uno usa `--force`.
+
+**Por confirmar:** `ajustes.agenda.zonaHoraria` quedó en `America/Denver` (Utah, por la lada 385).
 
 ## Producción (Hostinger)
 

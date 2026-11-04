@@ -43,6 +43,7 @@ use Cake\Log\Log;
 use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
 use Cake\Routing\Router;
+use Cake\Utility\Inflector;
 use Cake\Utility\Security;
 use Detection\MobileDetect;
 use function Cake\Core\env;
@@ -229,6 +230,10 @@ ServerRequest::addDetector('tablet', function ($request) {
 // \Cake\Utility\Inflector::rules('plural', ['/^(inflect)or$/i' => '\1ables']);
 // \Cake\Utility\Inflector::rules('irregular', ['red' => 'redlings']);
 // \Cake\Utility\Inflector::rules('uninflected', ['dontinflectme']);
+
+// Plurales en español que terminan en -iones (PushSuscripciones -> PushSuscripcion).
+Inflector::rules('singular', ['/(ion)es$/i' => '\1']);
+Inflector::rules('plural', ['/(ion)$/i' => '\1es']);
 
 // set a custom date and time format
 // see https://book.cakephp.org/5/en/core-libraries/time.html#setting-the-default-locale-and-format-string
