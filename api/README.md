@@ -69,6 +69,18 @@ proxy de Angular quitará el prefijo.
 | GET | `/disenos/{codigo}` | HTML: el sitio (`Sitio.shell`) con las meta tags del diseño; 404 si no existe o está oculto |
 | GET | `/sitemap.xml` | XML con el inicio y todos los diseños visibles |
 
+### Agenda pública
+
+| Método | Ruta | Qué hace |
+|---|---|---|
+| GET | `/agenda/disponibilidad` | `{agenda, hoy, ocupados: ['AAAA-MM-DD HH:MM'], diasBloqueados}`. Solo horarios, nunca de quién |
+| POST | `/agenda/citas` | `{nombre, telefono, fecha, hora, nota?, disenos?}` → 201 `{cita}` pendiente. 422 con `ocupado: true` si alguien más apartó ese horario |
+
+`POST /agenda/citas` no pide token CSRF: es público y no hay sesión que proteger. Lo cuidan un
+límite de 5 solicitudes por IP cada hora (429) y un campo trampa (`sitio`) que solo llena un bot.
+Se valida con la hora de Guadalajara (`App\Agenda\Agenda`): el horario de ese día, la anticipación
+de hoy, la ventana de semanas, los bloqueos y el índice único de horario.
+
 ### Panel
 
 Piden sesión (401 sin ella). Los `POST`, `PATCH`, `PUT` y `DELETE` piden además la cabecera
@@ -85,6 +97,11 @@ no puede leerla.
 | PATCH | `/admin/trabajos/{id}` | Cambia `titulo`, `alt`, `categoria`, `destacado` o `visible` |
 | PUT | `/admin/trabajos/orden` | `{ids: [...]}`: el orden nuevo; los que falten quedan al final |
 | DELETE | `/admin/trabajos/{id}` | Borra el diseño y, si su foto se subió desde el panel, sus archivos |
+| GET | `/admin/agenda?semana=AAAA-MM-DD` | La semana (lunes a domingo) con citas (también canceladas), bloqueos y cuántas hay por confirmar |
+| PATCH | `/admin/citas/{id}` | `{estado}`: `confirmada`, `cancelada` o `pendiente`. 422 si al reactivarla su horario ya se ocupó |
+| POST | `/admin/citas` | Cita que llegó por otro lado; queda confirmada y puede ser a cualquier hora |
+| POST | `/admin/bloqueos` | `{fecha, hora?, motivo?}`; sin hora bloquea el día completo |
+| DELETE | `/admin/bloqueos/{id}` | Quita el bloqueo |
 
 Los errores de datos responden 422 con `{message, errores: {campo: mensaje}}`, en español y listos
 para mostrarse.

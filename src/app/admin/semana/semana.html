@@ -1,0 +1,321 @@
+<section aria-labelledby="semana-titulo">
+  <header class="encabezado">
+    <h1 id="semana-titulo">Agenda</h1>
+    @if (agenda.semana(); as s) {
+      <p class="resumen">
+        @if (citasSemana().pendientes) {
+          <strong>{{ citasSemana().pendientes }} por confirmar</strong> ·
+        }
+        {{ citasSemana().confirmadas }} confirmadas esta semana
+        @if (agenda.pendientes() > citasSemana().pendientes) {
+          <br />{{ agenda.pendientes() - citasSemana().pendientes }} por confirmar en otras semanas
+        }
+      </p>
+    }
+  </header>
+
+  <nav class="semanas" aria-label="Cambiar de semana">
+    <button type="button" class="icono" (click)="ir(-1)" [disabled]="ocupado()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+      <span class="sr-only">Semana anterior</span>
+    </button>
+    <p class="semana-titulo" aria-live="polite">{{ titulo() || 'Cargando…' }}</p>
+    <button type="button" class="icono" (click)="ir(1)" [disabled]="ocupado()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+      <span class="sr-only">Semana siguiente</span>
+    </button>
+    @if (!esSemanaActual() && agenda.semana()) {
+      <button type="button" class="hoy" (click)="ir(0)">Hoy</button>
+    }
+  </nav>
+
+  <p class="aviso" [class.es-error]="aviso()?.error" role="status" aria-live="polite">
+    {{ aviso()?.texto }}
+  </p>
+
+  @if (error()) {
+    <div class="estado-error" role="alert">
+      <p>{{ error() }}</p>
+      <button type="button" class="btn btn-secundario" (click)="ir()">Intentar de nuevo</button>
+    </div>
+  } @else if (!agenda.semana()) {
+    <p class="cargando">Cargando la agenda…</p>
+  } @else {
+    <ol class="dias">
+      @for (d of dias(); track d.clave) {
+        <li class="dia" [class.es-hoy]="d.hoy" [class.pasado]="d.pasado">
+          <div class="dia-encabezado">
+            <h2>
+              {{ d.titulo }}
+              @if (d.hoy) {
+                <span class="marca marca-hoy">Hoy</span>
+              }
+            </h2>
+            @if (!d.pasado && !d.bloqueo) {
+              <button
+                type="button"
+                class="accion-texto"
+                (click)="abrir({ tipo: 'bloqueo', fecha: d.clave, hora: null })"
+              >
+                Bloquear día
+              </button>
+            }
+          </div>
+
+          @if (d.bloqueo; as b) {
+            <div class="bloqueo-dia">
+              <p>
+                <strong>Día bloqueado</strong>
+                @if (b.motivo) {
+                  · {{ b.motivo }}
+                }
+                <span class="ayuda">No se ofrecen citas en la página.</span>
+              </p>
+              <button
+                type="button"
+                class="btn btn-secundario chico"
+                (click)="desbloquear(b)"
+                [disabled]="ocupado()"
+              >
+                Desbloquear
+              </button>
+            </div>
+          }
+
+          <ul class="huecos">
+            @for (h of d.huecos; track h.hora) {
+              <li
+                class="hueco"
+                [class.con-cita]="h.cita"
+                [class.estado-pendiente]="h.cita?.estado === 'pendiente'"
+              >
+                <span class="hora">{{ formatoHora(h.hora) }}</span>
+
+                @if (h.cita; as c) {
+                  <div class="cita">
+                    <p class="cita-nombre">
+                      {{ c.nombre }}
+                      <span class="marca" [class]="'marca marca-' + c.estado">
+                        {{ c.estado === 'pendiente' ? 'Por confirmar' : 'Confirmada' }}
+                      </span>
+                    </p>
+                    <a class="telefono" [href]="whatsapp(c)" target="_blank" rel="noopener">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4.5 19.5l1.1-3.6A8 8 0 1 1 8.4 18.6z" />
+                      </svg>
+                      {{ telefonoLegible(c.telefono) }}
+                      <span class="sr-only">(escribirle por WhatsApp)</span>
+                    </a>
+                    @if (c.disenos.length) {
+                      <ul class="disenos" aria-label="Diseños que eligió">
+                        @for (x of c.disenos; track x.id) {
+                          <li>
+                            <img
+                              [src]="miniatura(x)"
+                              alt=""
+                              width="40"
+                              height="40"
+                              loading="lazy"
+                            />
+                            <span
+                              >{{ x.codigo }}<span class="sr-only">: {{ x.titulo }}</span></span
+                            >
+                          </li>
+                        }
+                      </ul>
+                    }
+                    @if (c.nota) {
+                      <p class="nota">“{{ c.nota }}”</p>
+                    }
+                    @if (!h.pasado) {
+                      <div class="acciones">
+                        @if (c.estado === 'pendiente') {
+                          <button
+                            type="button"
+                            class="btn btn-primario chico"
+                            (click)="estado(c, 'confirmada')"
+                            [disabled]="ocupado()"
+                          >
+                            Confirmar
+                          </button>
+                        }
+                        <button
+                          type="button"
+                          class="btn btn-secundario chico"
+                          (click)="estado(c, 'cancelada')"
+                          [disabled]="ocupado()"
+                        >
+                          Cancelar
+                        </button>
+                        <a class="accion-texto" [href]="whatsapp(c)" target="_blank" rel="noopener">
+                          {{ c.estado === 'pendiente' ? 'Escribirle' : 'Avisarle' }} por WhatsApp
+                        </a>
+                      </div>
+                    }
+                  </div>
+                } @else if (h.bloqueo; as b) {
+                  <div class="libre">
+                    <span class="estado-hueco"
+                      >Bloqueado{{ b.motivo ? ' · ' + b.motivo : '' }}</span
+                    >
+                    <button
+                      type="button"
+                      class="accion-texto"
+                      (click)="desbloquear(b)"
+                      [disabled]="ocupado()"
+                    >
+                      Desbloquear
+                    </button>
+                  </div>
+                } @else if (d.bloqueo || h.pasado) {
+                  <div class="libre"><span class="estado-hueco">—</span></div>
+                } @else {
+                  <div class="libre">
+                    <span class="estado-hueco">Libre</span>
+                    <button
+                      type="button"
+                      class="accion-texto"
+                      (click)="abrir({ tipo: 'cita', fecha: d.clave, hora: h.hora })"
+                    >
+                      Agregar cita
+                    </button>
+                    <button
+                      type="button"
+                      class="accion-texto"
+                      (click)="abrir({ tipo: 'bloqueo', fecha: d.clave, hora: h.hora })"
+                    >
+                      Bloquear
+                    </button>
+                  </div>
+                }
+              </li>
+            }
+          </ul>
+
+          @if (!d.pasado && !d.bloqueo) {
+            <button
+              type="button"
+              class="accion-texto otra-hora"
+              (click)="abrir({ tipo: 'cita', fecha: d.clave, hora: '' })"
+            >
+              + Cita a otra hora
+            </button>
+          }
+
+          @if (d.canceladas.length) {
+            <details class="canceladas">
+              <summary>
+                {{ d.canceladas.length }} cancelada{{ d.canceladas.length === 1 ? '' : 's' }}
+              </summary>
+              <ul>
+                @for (c of d.canceladas; track c.id) {
+                  <li>
+                    <span class="cancelada">{{ formatoHora(c.hora) }} · {{ c.nombre }}</span>
+                    <a class="accion-texto" [href]="whatsapp(c)" target="_blank" rel="noopener">
+                      Avisarle<span class="sr-only"> a {{ c.nombre }} por WhatsApp</span>
+                    </a>
+                    @if (!d.pasado) {
+                      <button
+                        type="button"
+                        class="accion-texto"
+                        (click)="estado(c, 'confirmada')"
+                        [disabled]="ocupado()"
+                      >
+                        Reactivar
+                      </button>
+                    }
+                  </li>
+                }
+              </ul>
+            </details>
+          }
+        </li>
+      } @empty {
+        <li class="vacio">No hay días de atención en esta semana.</li>
+      }
+    </ol>
+  }
+</section>
+
+<dialog #ventana class="dialogo" (close)="alCerrar()" aria-labelledby="dialogo-titulo">
+  @if (dialogo(); as d) {
+    <form (submit)="guardarDialogo($event)" novalidate>
+      <h2 id="dialogo-titulo">{{ tituloDialogo(d) }}</h2>
+
+      @if (d.tipo === 'cita') {
+        <label for="d-nombre">Nombre</label>
+        <input
+          id="d-nombre"
+          type="text"
+          autocomplete="off"
+          [value]="dNombre()"
+          (input)="dNombre.set(texto($event))"
+          [attr.aria-invalid]="dErrores()['nombre'] ? true : null"
+        />
+        @if (dErrores()['nombre']; as e) {
+          <p class="error-campo">{{ e }}</p>
+        }
+
+        <label for="d-telefono">WhatsApp</label>
+        <input
+          id="d-telefono"
+          type="tel"
+          inputmode="tel"
+          autocomplete="off"
+          placeholder="33 1234 5678"
+          [value]="dTelefono()"
+          (input)="dTelefono.set(texto($event))"
+          [attr.aria-invalid]="dErrores()['telefono'] ? true : null"
+        />
+        @if (dErrores()['telefono']; as e) {
+          <p class="error-campo">{{ e }}</p>
+        }
+
+        <label for="d-hora">Hora</label>
+        <input
+          id="d-hora"
+          type="time"
+          step="900"
+          [value]="dHora()"
+          (input)="dHora.set(texto($event))"
+          [attr.aria-invalid]="dErrores()['hora'] ? true : null"
+        />
+        @if (dErrores()['hora']; as e) {
+          <p class="error-campo">{{ e }}</p>
+        }
+        <p class="ayuda">
+          Queda confirmada. Puede ser a cualquier hora, mientras no se encime con otra cita.
+        </p>
+      }
+
+      <label for="d-nota"
+        >{{ d.tipo === 'cita' ? 'Nota' : 'Motivo' }} <span class="opcional">(opcional)</span></label
+      >
+      <input
+        id="d-nota"
+        type="text"
+        autocomplete="off"
+        [placeholder]="d.tipo === 'cita' ? 'Ej. me escribió por WhatsApp' : 'Ej. vacaciones, curso'"
+        [value]="dNota()"
+        (input)="dNota.set(texto($event))"
+      />
+      @if (d.tipo === 'bloqueo') {
+        <p class="ayuda">
+          {{ d.hora ? 'Esa hora' : 'Ese día' }} deja de ofrecerse en la página. Las citas que ya
+          estaban no se cancelan.
+        </p>
+      }
+
+      @if (dErrores()['general']; as e) {
+        <p class="error-campo" role="alert">{{ e }}</p>
+      }
+
+      <div class="botones">
+        <button type="submit" class="btn btn-primario" [disabled]="ocupado()">
+          {{ ocupado() ? 'Guardando…' : d.tipo === 'cita' ? 'Agregar cita' : 'Bloquear' }}
+        </button>
+        <button type="button" class="btn btn-secundario" (click)="cerrar()">Cancelar</button>
+      </div>
+    </form>
+  }
+</dialog>

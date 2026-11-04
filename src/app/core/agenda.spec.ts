@@ -1,5 +1,5 @@
 import { CATALOGO_COMPILADO } from './catalogo.service';
-import { formatoHora, generarSemanas, mensajeCita } from './agenda';
+import { formatoHora, generarSemanas, mensajeAvisoCita, mensajeCita } from './agenda';
 import { SITE } from './site.config';
 
 const entreSemana = ['14:00', '16:00', '18:00', '20:00'];
@@ -74,6 +74,43 @@ describe('agenda', () => {
       expect(semanas[0].dias[0].clave).toBe('2026-11-09');
       expect(semanas[0].dias.every((d) => d.horas.length === d.todas.length)).toBe(true);
     }
+  });
+
+  it('no ofrece horarios apartados ni días bloqueados', () => {
+    const ocupacion = {
+      ocupados: new Set(['2026-11-05 16:00', '2026-11-07 09:00']),
+      diasBloqueados: new Set(['2026-11-06']),
+    };
+    const dias = generarSemanas(gdl(2026, 10, 4, 10), cfg, ocupacion).flatMap((s) => s.dias);
+    const jueves = dias.find((d) => d.clave === '2026-11-05')!;
+    expect(jueves.horas).toEqual(['14:00', '18:00', '20:00']);
+    // El horario completo se sigue mostrando (apagado) para que se entienda qué está ocupado.
+    expect(jueves.todas).toEqual(entreSemana);
+    const viernes = dias.find((d) => d.clave === '2026-11-06')!;
+    expect(viernes.horas).toEqual([]);
+    expect(viernes.bloqueado).toBe(true);
+    expect(dias.find((d) => d.clave === '2026-11-07')!.horas[0]).toBe('11:00');
+  });
+
+  it('salta a la siguiente semana si lo que queda de la actual está ocupado', () => {
+    const ocupados = new Set(['2026-11-07 17:00', '2026-11-07 19:00']);
+    const semanas = generarSemanas(gdl(2026, 10, 7, 15, 30), cfg, { ocupados, diasBloqueados: new Set() });
+    expect(semanas[0].dias[0].clave).toBe('2026-11-09');
+  });
+
+  it('el aviso después de apartar incluye el número de solicitud', () => {
+    const msg = mensajeAvisoCita({
+      id: 12,
+      nombre: ' Carla ',
+      fecha: new Date(2026, 10, 10),
+      hora: '18:00',
+      disenos: [CATALOGO_COMPILADO.trabajos.find((t) => t.id === 'NI-25')!],
+    });
+    expect(msg).toContain('Soy Carla y acabo de apartar una cita en tu página (solicitud #12)');
+    expect(msg).toContain('Día: martes 10 de noviembre');
+    expect(msg).toContain('Hora: 6:00 p. m.');
+    expect(msg).toContain('• Conchas y perla (NI-25)');
+    expect(msg).not.toMatch(/confirmada/i);
   });
 
   it('arma la solicitud con diseños y enlaces, sin afirmar que está confirmada', () => {

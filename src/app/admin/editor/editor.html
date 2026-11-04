@@ -1,4 +1,4 @@
-<a class="volver" routerLink="/admin">
+<a class="volver" routerLink="/admin/catalogo">
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round" />
   </svg>
@@ -9,7 +9,9 @@
   <p class="error" role="alert">{{ cargaError() }}</p>
 } @else if (noExiste()) {
   <h1>Este diseño ya no existe</h1>
-  <p class="ayuda">Puede que se haya borrado. <a routerLink="/admin">Volver al catálogo</a></p>
+  <p class="ayuda">
+    Puede que se haya borrado. <a routerLink="/admin/catalogo">Volver al catálogo</a>
+  </p>
 } @else if (!nuevo() && !trabajo()) {
   <p class="ayuda">Cargando…</p>
 } @else {
@@ -165,7 +167,7 @@
             {{ nuevo() ? 'Publicar diseño' : 'Guardar cambios' }}
           }
         </button>
-        <a class="btn btn-secundario" routerLink="/admin">Cancelar</a>
+        <a class="btn btn-secundario" routerLink="/admin/catalogo">Cancelar</a>
       </div>
 
       @if (!nuevo()) {

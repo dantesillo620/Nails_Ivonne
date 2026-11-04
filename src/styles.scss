@@ -220,6 +220,7 @@ button {
 }
 
 .btn-secundario {
+  background: transparent;
   border-color: color-mix(in srgb, var(--vino) 45%, transparent);
   color: var(--vino);
 }

@@ -80,7 +80,15 @@ export interface SiteConfig {
       texto: string;
       puntos: { titulo: string; texto: string }[];
     };
-    agenda: { titulo: string; texto: string; aviso: string };
+    agenda: {
+      titulo: string;
+      /** Texto y aviso cuando la cita se aparta en la página. */
+      texto: string;
+      aviso: string;
+      /** Si la API no responde, la agenda solo arma un WhatsApp. */
+      textoWhatsapp: string;
+      avisoWhatsapp: string;
+    };
     contacto: { titulo: string; texto: string; textoSinWhatsapp: string };
     whatsapp: {
       /** Mensaje general para consultar una cita. */
@@ -181,8 +189,12 @@ export const SITE: SiteConfig = {
     agenda: {
       titulo: 'Agenda tu cita',
       texto:
-        'Elige el día y la hora que te acomodan y, si quieres, los diseños que te gustaron. Se arma un mensaje de WhatsApp para Ivonne con todo listo.',
+        'Elige el día y la hora que te acomodan y, si quieres, los diseños que te gustaron. Tu horario queda apartado y Ivonne te confirma por WhatsApp.',
       aviso:
+        'Ivonne revisa cada solicitud y te confirma por WhatsApp. Si necesitas cambiarla, escríbele.',
+      textoWhatsapp:
+        'Elige el día y la hora que te acomodan y, si quieres, los diseños que te gustaron. Se arma un mensaje de WhatsApp para Ivonne con todo listo.',
+      avisoWhatsapp:
         'Es una solicitud: Ivonne te responde por WhatsApp para confirmar si el horario está libre.',
     },
     contacto: {

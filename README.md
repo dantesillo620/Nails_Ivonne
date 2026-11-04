@@ -40,11 +40,16 @@ Todo está en **`src/app/core/site.config.ts`**:
 
 - En el catálogo, el visor y la página de cada diseño hay un botón **+ / Elegir para mi
   cita**. Lo elegido se guarda en el navegador de la clienta y aparece en la sección **Agenda**.
-- En la agenda elige día (lunes a sábado), hora (cambian entre semana y sábado) y, si quiere,
-  nombre y comentarios. El botón
-  abre WhatsApp con el mensaje armado para Ivonne. **No reserva nada**: Ivonne confirma por
-  mensaje. La página no sabe qué horas están ocupadas.
-- WhatsApp no permite adjuntar fotos desde un enlace, así que el mensaje incluye la dirección
+- La agenda pide a la API los horarios libres (`/api/agenda/disponibilidad`): no ofrece las horas
+  ya apartadas ni las que Ivonne bloqueó, y "hoy" se calcula con la hora de Guadalajara.
+- La clienta elige día y hora, escribe su nombre y su WhatsApp y toca **Apartar mi cita**: la cita
+  se guarda como *pendiente* y ese horario deja de ofrecerse. En la confirmación puede avisarle a
+  Ivonne por WhatsApp con un mensaje ya armado (incluye el número de solicitud y los diseños).
+  Su nombre y WhatsApp se recuerdan en ese navegador para la siguiente vez.
+- Un WhatsApp de 10 dígitos se toma como de México (+52); para otro país se escribe con `+`.
+- **Si la API no responde**, la agenda funciona como antes: arma un WhatsApp para Ivonne y no
+  aparta nada.
+- WhatsApp no permite adjuntar fotos desde un enlace, así que los mensajes incluyen la dirección
   de cada diseño (`/disenos/ni-25`). WhatsApp muestra la foto como vista previa del enlace.
 - Si `contacto.whatsapp` queda vacío, la agenda y los botones de elegir se ocultan.
 
@@ -75,6 +80,12 @@ La portada y la foto de "Experiencia" se eligen por código en `SITE.fotos`
 
 Desde el celular o la computadora, Ivonne:
 
+- **ve su agenda por semana** (pestaña *Agenda*, la primera): las citas de cada día con el
+  WhatsApp de la clienta, los diseños que eligió y su comentario. La pestaña muestra cuántas hay
+  por confirmar;
+- **confirma o cancela** cada cita y le avisa a la clienta por WhatsApp con el mensaje ya escrito;
+- **agrega citas** que le llegaron por otro lado (a cualquier hora) y **bloquea** un día o una
+  hora: deja de ofrecerse en la página, sin cancelar lo que ya estaba;
 - **agrega diseños** con una foto de la galería o la cámara. El navegador la reduce antes de
   subirla y el servidor genera las WebP y la vista previa para WhatsApp. El diseño nuevo recibe
   el siguiente código (`NI-37`) y aparece primero;

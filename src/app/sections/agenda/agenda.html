@@ -3,7 +3,7 @@
     <header class="encabezado" appReveal>
       <p class="etiqueta">Agenda</p>
       <h2 id="agenda-titulo" class="titulo-seccion">{{ textos.titulo }}</h2>
-      <p class="texto-seccion">{{ textos.texto }}</p>
+      <p class="texto-seccion">{{ modo() === 'whatsapp' ? textos.textoWhatsapp : textos.texto }}</p>
 
       @if (horario.length) {
         <dl class="horario">
@@ -17,159 +17,295 @@
       }
     </header>
 
-    <form class="formulario" (submit)="faltaDato($event)" novalidate>
-      <div class="columna">
-        <fieldset class="paso">
-          <legend><span class="num" aria-hidden="true">1</span> Elige el día</legend>
-
-          @if (semanas().length) {
-            @for (s of semanas(); track s.titulo) {
-              <p class="semana">Semana del {{ s.titulo }}</p>
-              <div class="dias">
-                @for (d of s.dias; track d.clave) {
-                  <label class="dia" [class.elegido]="dia()?.clave === d.clave">
-                    <input
-                      type="radio"
-                      name="dia"
-                      class="sr-only"
-                      [value]="d.clave"
-                      [checked]="dia()?.clave === d.clave"
-                      [disabled]="!d.horas.length"
-                      (change)="elegirDia(d)"
-                    />
-                    <span class="dsem">{{ diaSemana(d.fecha) }}</span>
-                    <span class="dnum">{{ d.fecha.getDate() }}</span>
-                    <span class="dmes">{{ mes(d.fecha) }}</span>
-                    @if (!d.horas.length) {
-                      <span class="sr-only">(sin horarios)</span>
-                    }
-                  </label>
-                }
-              </div>
-            }
-            <p class="nota-dias">Domingo no se trabaja.</p>
-          } @else {
-            <p class="cargando">Cargando los próximos días…</p>
-          }
-        </fieldset>
-
-        <fieldset class="paso" [disabled]="!dia()">
-          <legend><span class="num" aria-hidden="true">2</span> Elige la hora</legend>
-          <div class="horas">
-            @for (h of horasDia(); track h) {
-              <label class="hora" [class.elegido]="hora() === h">
-                <input
-                  type="radio"
-                  name="hora"
-                  class="sr-only"
-                  [value]="h"
-                  [checked]="hora() === h"
-                  [disabled]="!dia()?.horas?.includes(h)"
-                  (change)="elegirHora(h)"
-                />
-                {{ formatoHora(h) }}
-              </label>
-            }
-          </div>
-          @if (!dia()) {
-            <p class="ayuda">Primero elige un día.</p>
-          }
-        </fieldset>
+    @if (apartada(); as a) {
+      <div id="agenda-lista" class="confirmacion" tabindex="-1" role="status">
+        <p class="resumen-etiqueta">Cita apartada · solicitud #{{ a.id }}</p>
+        <h3 class="confirmacion-titulo">¡Listo, {{ a.nombre }}!</h3>
+        <p class="resumen-valor">
+          {{ formatoDia(a.fecha) }}, <span class="sin-corte">{{ formatoHora(a.hora) }}</span>
+        </p>
+        <p class="confirmacion-texto">
+          Tu horario quedó apartado. Ivonne revisa tu solicitud y te confirma por WhatsApp.
+        </p>
+        @if (urlAviso(); as u) {
+          <a class="btn btn-claro" [href]="u" target="_blank" rel="noopener">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              aria-hidden="true"
+            >
+              <path d="M4.5 19.5l1.1-3.6A8 8 0 1 1 8.4 18.6z" stroke-linejoin="round" />
+            </svg>
+            Avisarle a Ivonne por WhatsApp
+            <span class="sr-only">(abre WhatsApp)</span>
+          </a>
+        }
+        <button type="button" class="otra" (click)="otra()">Pedir otra cita</button>
       </div>
+    } @else {
+      <form
+        class="formulario"
+        (submit)="modo() === 'whatsapp' ? faltaDato($event) : apartar($event)"
+        novalidate
+      >
+        <div class="columna">
+          <fieldset class="paso" [attr.aria-describedby]="errores().dia ? 'error-dia' : null">
+            <legend><span class="num" aria-hidden="true">1</span> Elige el día</legend>
 
-      <div class="columna">
-        <fieldset class="paso">
-          <legend>
-            <span class="num" aria-hidden="true">3</span> Tu diseño
-            <span class="opcional">(opcional)</span>
-          </legend>
-
-          @if (seleccion.trabajos().length) {
-            <ul class="elegidos">
-              @for (t of seleccion.trabajos(); track t.id) {
-                <li>
-                  <img [src]="t.imagen.base + '-480.webp'" alt="" width="56" height="56" loading="lazy" />
-                  <span class="nombre-diseno">
-                    {{ t.titulo }}
-                    <span class="id">{{ t.id }}</span>
-                  </span>
-                  <button
-                    type="button"
-                    class="quitar"
-                    (click)="seleccion.quitar(t.id)"
-                    [attr.aria-label]="'Quitar ' + t.titulo + ', ' + t.id"
-                  >
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" /></svg>
-                  </button>
-                </li>
+            @if (semanas().length) {
+              @for (s of semanas(); track s.titulo) {
+                <p class="semana">Semana del {{ s.titulo }}</p>
+                <div class="dias">
+                  @for (d of s.dias; track d.clave) {
+                    <label class="dia" [class.elegido]="dia()?.clave === d.clave">
+                      <input
+                        type="radio"
+                        name="dia"
+                        class="sr-only"
+                        [value]="d.clave"
+                        [checked]="dia()?.clave === d.clave"
+                        [disabled]="!d.horas.length"
+                        (change)="elegirDia(d)"
+                      />
+                      <span class="dsem">{{ diaSemana(d.fecha) }}</span>
+                      <span class="dnum">{{ d.fecha.getDate() }}</span>
+                      <span class="dmes">{{ mes(d.fecha) }}</span>
+                      @if (!d.horas.length) {
+                        <span class="sr-only">{{
+                          d.bloqueado ? '(no hay citas ese día)' : '(sin horarios)'
+                        }}</span>
+                      }
+                    </label>
+                  }
+                </div>
               }
-            </ul>
-            <a class="enlace" routerLink="/" fragment="catalogo">Elegir otro diseño</a>
-          } @else {
-            <p class="ayuda">
-              Toca el <span class="mas" aria-hidden="true">+</span><span class="sr-only">botón Elegir</span>
-              en las fotos del catálogo para agregarlas aquí, o cuéntale tu idea a Ivonne en los comentarios.
-            </p>
-            <a class="enlace" routerLink="/" fragment="catalogo">Ver el catálogo</a>
-          }
-        </fieldset>
+              <p class="nota-dias">Domingo no se trabaja.</p>
+            } @else {
+              <p class="cargando">Cargando los próximos días…</p>
+            }
+            @if (errores().dia; as e) {
+              <p id="error-dia" class="error" role="alert">{{ e }}</p>
+            }
+          </fieldset>
 
-        <div class="paso datos">
-          <label for="agenda-nombre">Tu nombre <span class="opcional">(opcional)</span></label>
-          <input
-            id="agenda-nombre"
-            type="text"
-            autocomplete="given-name"
-            maxlength="60"
-            [value]="nombre()"
-            (input)="escribir('nombre', $event)"
-          />
-
-          <label for="agenda-nota">Comentarios <span class="opcional">(opcional)</span></label>
-          <textarea
-            id="agenda-nota"
-            rows="3"
-            maxlength="400"
-            [value]="nota()"
-            (input)="escribir('nota', $event)"
-          ></textarea>
+          <fieldset
+            class="paso"
+            [disabled]="!dia()"
+            [attr.aria-describedby]="errores().hora ? 'error-hora' : null"
+          >
+            <legend><span class="num" aria-hidden="true">2</span> Elige la hora</legend>
+            <div class="horas">
+              @for (h of horasDia(); track h) {
+                <label class="hora" [class.elegido]="hora() === h">
+                  <input
+                    type="radio"
+                    name="hora"
+                    class="sr-only"
+                    [value]="h"
+                    [checked]="hora() === h"
+                    [disabled]="!dia()?.horas?.includes(h)"
+                    (change)="elegirHora(h)"
+                  />
+                  {{ formatoHora(h) }}
+                  @if (!dia()?.horas?.includes(h)) {
+                    <span class="sr-only">(no disponible)</span>
+                  }
+                </label>
+              }
+            </div>
+            @if (!dia()) {
+              <p class="ayuda">Primero elige un día.</p>
+            } @else if (modo() !== 'whatsapp' && dia()!.horas.length < horasDia().length) {
+              <p class="ayuda">Las horas apagadas ya están apartadas o ya pasaron.</p>
+            }
+            @if (errores().hora; as e) {
+              <p id="error-hora" class="error" role="alert">{{ e }}</p>
+            }
+          </fieldset>
         </div>
 
-        <div class="envio">
-          <p class="resumen" aria-live="polite">
-            @if (resumen(); as r) {
-              <span class="resumen-etiqueta">Tu solicitud</span>
-              <span class="resumen-valor">{{ r }}</span>
-            } @else {
-              Elige día y hora para armar tu mensaje.
-            }
-          </p>
+        <div class="columna">
+          <fieldset class="paso">
+            <legend>
+              <span class="num" aria-hidden="true">3</span> Tu diseño
+              <span class="opcional">(opcional)</span>
+            </legend>
 
-          @if (url(); as u) {
-            <a class="btn btn-claro enviar" [href]="u" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-                <path d="M4.5 19.5l1.1-3.6A8 8 0 1 1 8.4 18.6z" stroke-linejoin="round" />
-              </svg>
-              Enviar solicitud por WhatsApp
-              <span class="sr-only">(abre WhatsApp)</span>
-            </a>
-          } @else {
-            <button type="submit" class="btn btn-claro enviar" [attr.aria-describedby]="error() ? 'agenda-error' : null">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-                <path d="M4.5 19.5l1.1-3.6A8 8 0 1 1 8.4 18.6z" stroke-linejoin="round" />
-              </svg>
-              Enviar solicitud por WhatsApp
-            </button>
-            @if (error()) {
-              <p id="agenda-error" class="error" role="alert">
-                {{ dia() ? 'Elige una hora para continuar.' : 'Elige un día y una hora para continuar.' }}
+            @if (seleccion.trabajos().length) {
+              <ul class="elegidos">
+                @for (t of seleccion.trabajos(); track t.id) {
+                  <li>
+                    <img
+                      [src]="t.imagen.base + '-480.webp'"
+                      alt=""
+                      width="56"
+                      height="56"
+                      loading="lazy"
+                    />
+                    <span class="nombre-diseno">
+                      {{ t.titulo }}
+                      <span class="id">{{ t.id }}</span>
+                    </span>
+                    <button
+                      type="button"
+                      class="quitar"
+                      (click)="seleccion.quitar(t.id)"
+                      [attr.aria-label]="'Quitar ' + t.titulo + ', ' + t.id"
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 7l10 10M17 7L7 17" />
+                      </svg>
+                    </button>
+                  </li>
+                }
+              </ul>
+              <a class="enlace" routerLink="/" fragment="catalogo">Elegir otro diseño</a>
+            } @else {
+              <p class="ayuda">
+                Toca el <span class="mas" aria-hidden="true">+</span
+                ><span class="sr-only">botón Elegir</span>
+                en las fotos del catálogo para agregarlas aquí, o cuéntale tu idea a Ivonne en los
+                comentarios.
+              </p>
+              <a class="enlace" routerLink="/" fragment="catalogo">Ver el catálogo</a>
+            }
+          </fieldset>
+
+          <div class="paso datos">
+            <label for="agenda-nombre">
+              Tu nombre
+              @if (modo() === 'whatsapp') {
+                <span class="opcional">(opcional)</span>
+              }
+            </label>
+            <input
+              id="agenda-nombre"
+              type="text"
+              autocomplete="given-name"
+              maxlength="60"
+              [value]="nombre()"
+              (input)="escribir('nombre', $event)"
+              [attr.aria-invalid]="errores().nombre ? true : null"
+              [attr.aria-describedby]="errores().nombre ? 'error-nombre' : null"
+            />
+            @if (errores().nombre; as e) {
+              <p id="error-nombre" class="error">{{ e }}</p>
+            }
+
+            @if (modo() !== 'whatsapp') {
+              <label for="agenda-telefono">Tu WhatsApp</label>
+              <input
+                id="agenda-telefono"
+                type="tel"
+                autocomplete="tel"
+                inputmode="tel"
+                maxlength="20"
+                placeholder="33 1234 5678"
+                [value]="telefono()"
+                (input)="escribir('telefono', $event)"
+                [attr.aria-invalid]="errores().telefono ? true : null"
+                aria-describedby="ayuda-telefono"
+              />
+              @if (errores().telefono; as e) {
+                <p class="error">{{ e }}</p>
+              }
+              <p id="ayuda-telefono" class="ayuda-campo">
+                Ivonne te confirma por aquí. Si tu número no es de México, escríbelo con + y la lada
+                del país.
               </p>
             }
-          }
 
-          <p class="aviso">{{ textos.aviso }}</p>
+            <label for="agenda-nota">Comentarios <span class="opcional">(opcional)</span></label>
+            <textarea
+              id="agenda-nota"
+              rows="3"
+              maxlength="400"
+              [value]="nota()"
+              (input)="escribir('nota', $event)"
+            ></textarea>
+
+            <!-- Campo trampa: las personas no lo ven; si llega lleno, es un bot. -->
+            <div class="trampa" aria-hidden="true">
+              <label for="agenda-sitio">No llenes este campo</label>
+              <input
+                id="agenda-sitio"
+                type="text"
+                tabindex="-1"
+                autocomplete="off"
+                [value]="sitio()"
+                (input)="escribir('sitio', $event)"
+              />
+            </div>
+          </div>
+
+          <div class="envio">
+            <p class="resumen" aria-live="polite">
+              @if (resumen(); as r) {
+                <span class="resumen-etiqueta">Tu cita</span>
+                <span class="resumen-valor">{{ r }}</span>
+              } @else {
+                Elige día y hora.
+              }
+            </p>
+
+            @if (modo() !== 'whatsapp') {
+              <button
+                type="submit"
+                class="btn btn-claro enviar"
+                [disabled]="enviando() || modo() === 'cargando'"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  aria-hidden="true"
+                >
+                  <rect x="4" y="5" width="16" height="15" rx="2" />
+                  <path d="M4 10h16M9 3v4M15 3v4" stroke-linecap="round" />
+                </svg>
+                {{ enviando() ? 'Apartando…' : 'Apartar mi cita' }}
+              </button>
+              @if (error()) {
+                <p class="error" role="alert">{{ error() }}</p>
+              }
+              <p class="aviso">{{ textos.aviso }}</p>
+            } @else {
+              @if (url(); as u) {
+                <a class="btn btn-claro enviar" [href]="u" target="_blank" rel="noopener">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    aria-hidden="true"
+                  >
+                    <path d="M4.5 19.5l1.1-3.6A8 8 0 1 1 8.4 18.6z" stroke-linejoin="round" />
+                  </svg>
+                  Enviar solicitud por WhatsApp
+                  <span class="sr-only">(abre WhatsApp)</span>
+                </a>
+              } @else {
+                <button type="submit" class="btn btn-claro enviar">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    aria-hidden="true"
+                  >
+                    <path d="M4.5 19.5l1.1-3.6A8 8 0 1 1 8.4 18.6z" stroke-linejoin="round" />
+                  </svg>
+                  Enviar solicitud por WhatsApp
+                </button>
+              }
+              <p class="aviso">{{ textos.avisoWhatsapp }}</p>
+            }
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
+    }
   </div>
 </section>

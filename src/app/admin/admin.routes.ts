@@ -26,7 +26,13 @@ export const ADMIN_ROUTES: Routes = [
         children: [
           {
             path: '',
-            title: 'Panel',
+            title: 'Agenda',
+            data: PRIVADA,
+            loadComponent: () => import('./semana/semana'),
+          },
+          {
+            path: 'catalogo',
+            title: 'Catálogo',
             data: PRIVADA,
             loadComponent: () => import('./lista/lista'),
           },

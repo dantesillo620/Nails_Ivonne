@@ -2,7 +2,17 @@ import { Trabajo } from '../data/trabajos';
 import { urlDiseno } from './contacto';
 import { SITE, SiteConfig } from './site.config';
 
-type ConfigAgenda = SiteConfig['agenda'];
+export type ConfigAgenda = SiteConfig['agenda'];
+
+/** Horarios que ya no se ofrecen, según la API (GET /api/agenda/disponibilidad). */
+export interface Ocupacion {
+  /** 'AAAA-MM-DD HH:MM' de citas apartadas y horas bloqueadas. */
+  ocupados: ReadonlySet<string>;
+  /** 'AAAA-MM-DD' de días bloqueados completos (vacaciones, cursos…). */
+  diasBloqueados: ReadonlySet<string>;
+}
+
+const SIN_OCUPACION: Ocupacion = { ocupados: new Set(), diasBloqueados: new Set() };
 
 export interface DiaAgenda {
   /** 'AAAA-MM-DD', fecha del estudio. */
@@ -10,8 +20,10 @@ export interface DiaAgenda {
   fecha: Date;
   /** Horario de ese día de la semana. */
   todas: string[];
-  /** Horas que todavía se pueden pedir ese día. */
+  /** Horas que todavía se pueden pedir ese día (ni pasadas ni ocupadas). */
   horas: string[];
+  /** Ivonne bloqueó el día completo. */
+  bloqueado?: boolean;
 }
 
 export interface SemanaAgenda {
@@ -20,10 +32,14 @@ export interface SemanaAgenda {
   dias: DiaAgenda[];
 }
 
-const fmtDiaLargo = new Intl.DateTimeFormat('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
+const fmtDiaLargo = new Intl.DateTimeFormat('es-MX', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+});
 const fmtMes = new Intl.DateTimeFormat('es-MX', { month: 'long' });
 
-function claveFecha(d: Date): string {
+export function claveFecha(d: Date): string {
   const mm = String(d.getMonth() + 1).padStart(2, '0');
   const dd = String(d.getDate()).padStart(2, '0');
   return `${d.getFullYear()}-${mm}-${dd}`;
@@ -74,8 +90,12 @@ export function relojEstudio(ahora: Date, zonaHoraria: string): { fecha: Date; m
     minute: 'numeric',
     hourCycle: 'h23',
   }).formatToParts(ahora);
-  const n = (tipo: Intl.DateTimeFormatPartTypes) => Number(partes.find((p) => p.type === tipo)?.value);
-  return { fecha: new Date(n('year'), n('month') - 1, n('day')), minutos: n('hour') * 60 + n('minute') };
+  const n = (tipo: Intl.DateTimeFormatPartTypes) =>
+    Number(partes.find((p) => p.type === tipo)?.value);
+  return {
+    fecha: new Date(n('year'), n('month') - 1, n('day')),
+    minutos: n('hour') * 60 + n('minute'),
+  };
 }
 
 /**
@@ -84,7 +104,11 @@ export function relojEstudio(ahora: Date, zonaHoraria: string): { fecha: Date; m
  * semana se lea completa. Si la semana actual ya no tiene horas, empieza en la siguiente.
  * "Hoy" es el día en la zona horaria del estudio, no el del dispositivo.
  */
-export function generarSemanas(ahora: Date, cfg: ConfigAgenda = SITE.agenda): SemanaAgenda[] {
+export function generarSemanas(
+  ahora: Date,
+  cfg: ConfigAgenda = SITE.agenda,
+  ocupacion: Ocupacion = SIN_OCUPACION,
+): SemanaAgenda[] {
   const { fecha: hoy, minutos: minutosAhora } = relojEstudio(ahora, cfg.zonaHoraria);
   const lunes = sumarDias(hoy, -((hoy.getDay() + 6) % 7));
 
@@ -96,11 +120,15 @@ export function generarSemanas(ahora: Date, cfg: ConfigAgenda = SITE.agenda): Se
       const fecha = sumarDias(inicio, i);
       const todas = cfg.horas[fecha.getDay()] ?? [];
       if (todas.length === 0) continue;
+      const clave = claveFecha(fecha);
+      const bloqueado = ocupacion.diasBloqueados.has(clave);
       let horas: string[] = [];
-      if (fecha > hoy) horas = [...todas];
+      if (bloqueado) horas = [];
+      else if (fecha > hoy) horas = [...todas];
       else if (fecha.getTime() === hoy.getTime())
         horas = todas.filter((h) => minutos(h) - minutosAhora >= cfg.anticipacionMinutos);
-      dias.push({ clave: claveFecha(fecha), fecha, todas, horas });
+      horas = horas.filter((h) => !ocupacion.ocupados.has(`${clave} ${h}`));
+      dias.push({ clave, fecha, todas, horas, ...(bloqueado ? { bloqueado } : {}) });
     }
     if (dias.length === 0) continue;
     semanas.push({ titulo: tituloSemana(dias[0].fecha, dias[dias.length - 1].fecha), dias });
@@ -136,4 +164,37 @@ export function mensajeCita(s: SolicitudCita): string {
   if (nota) lineas.push('', `Comentarios: ${nota}`);
   lineas.push('', '¿Me confirmas si tienes disponible ese horario?');
   return lineas.join('\n');
+}
+
+export interface CitaApartada {
+  id: number;
+  nombre: string;
+  fecha: Date;
+  hora: string;
+  disenos: readonly Trabajo[];
+}
+
+/**
+ * Aviso por WhatsApp después de apartar la cita en la página: Ivonne ya la tiene
+ * en su panel, el mensaje solo la pone al tanto. Tampoco afirma que esté confirmada.
+ */
+export function mensajeAvisoCita(c: CitaApartada): string {
+  const lineas = [
+    `Hola, Ivonne. Soy ${c.nombre.trim()} y acabo de apartar una cita en tu página (solicitud #${c.id}):`,
+    '',
+    `Día: ${formatoDia(c.fecha)}`,
+    `Hora: ${formatoHora(c.hora)}`,
+  ];
+  if (c.disenos.length) {
+    lineas.push('', c.disenos.length === 1 ? 'Diseño que me gustó:' : 'Diseños que me gustaron:');
+    for (const t of c.disenos) lineas.push(`• ${t.titulo} (${t.id})`, urlDiseno(t.id));
+  }
+  lineas.push('', '¿Me confirmas, por favor?');
+  return lineas.join('\n');
+}
+
+/** 'AAAA-MM-DD' -> Date a medianoche local (solo representa el día del calendario). */
+export function fechaDeClave(clave: string): Date {
+  const [a, m, d] = clave.split('-').map(Number);
+  return new Date(a, m - 1, d);
 }

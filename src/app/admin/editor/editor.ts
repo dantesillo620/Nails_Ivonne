@@ -156,7 +156,7 @@ export default class Editor {
       } else {
         guardado = await this.catalogo.editar(this.trabajo()!.id, datos);
       }
-      void this.router.navigate(['/admin'], {
+      void this.router.navigate(['/admin/catalogo'], {
         state: { aviso: `${guardado.codigo} ${this.nuevo() ? 'publicado' : 'guardado'}.` },
       });
     } catch (e) {
@@ -179,7 +179,7 @@ export default class Editor {
     this.borrando.set(true);
     try {
       await this.catalogo.borrar(t.id);
-      void this.router.navigate(['/admin'], { state: { aviso: `${t.codigo} se borró.` } });
+      void this.router.navigate(['/admin/catalogo'], { state: { aviso: `${t.codigo} se borró.` } });
     } catch (e) {
       this.error.set(explicarError(e).mensaje);
     } finally {

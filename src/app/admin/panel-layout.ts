@@ -1,11 +1,19 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { PanelAgendaService } from './panel-agenda.service';
 import { SesionService } from './sesion.service';
 
 /** Marco del panel: barra superior con la marca, enlace al sitio y salir. */
 @Component({
   selector: 'app-panel-layout',
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="panel">
@@ -23,6 +31,24 @@ import { SesionService } from './sesion.service';
           </nav>
         }
       </header>
+      @if (sesion.usuario()) {
+        <nav class="pestanas" aria-label="Secciones del panel">
+          <a
+            routerLink="/admin"
+            routerLinkActive="activa"
+            [routerLinkActiveOptions]="{ exact: true }"
+            ariaCurrentWhenActive="page"
+          >
+            Agenda
+            @if (agenda.pendientes(); as n) {
+              <span class="contador">{{ n }}<span class="sr-only"> por confirmar</span></span>
+            }
+          </a>
+          <a routerLink="/admin/catalogo" routerLinkActive="activa" ariaCurrentWhenActive="page"
+            >Catálogo</a
+          >
+        </nav>
+      }
       <div class="contenido">
         <router-outlet />
       </div>
@@ -90,6 +116,41 @@ import { SesionService } from './sesion.service';
     .acciones button {
       border: 1px solid color-mix(in srgb, var(--marfil) 35%, transparent);
     }
+    .pestanas {
+      position: sticky;
+      top: 60px;
+      z-index: 9;
+      display: flex;
+      justify-content: center;
+      gap: 0.25rem;
+      padding: 0.4rem 1rem;
+      background: var(--marfil);
+      border-bottom: 1px solid var(--linea);
+    }
+    .pestanas a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      min-height: 44px;
+      padding: 0 1.1rem;
+      border-radius: 999px;
+      text-decoration: none;
+      color: var(--tinta-suave);
+    }
+    .pestanas a.activa {
+      background: var(--ciruela);
+      color: var(--marfil);
+    }
+    .contador {
+      min-width: 1.4rem;
+      padding: 0 0.4rem;
+      border-radius: 999px;
+      background: var(--dorado);
+      color: var(--ciruela-2);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
+    }
     .contenido {
       max-width: 960px;
       margin-inline: auto;
@@ -102,8 +163,20 @@ import { SesionService } from './sesion.service';
 })
 export default class PanelLayout {
   protected readonly sesion = inject(SesionService);
+  protected readonly agenda = inject(PanelAgendaService);
   private readonly router = inject(Router);
   protected readonly saliendo = signal(false);
+
+  constructor() {
+    // El número de citas por confirmar se ve en la pestaña desde cualquier página del panel.
+    effect(() => {
+      if (this.sesion.usuario() && !untracked(() => this.agenda.semana())) {
+        void this.agenda.cargar().catch(() => {
+          /* la página de agenda muestra el error si se visita */
+        });
+      }
+    });
+  }
 
   protected async salir(): Promise<void> {
     this.saliendo.set(true);
