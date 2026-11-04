@@ -14,6 +14,18 @@
     }
   </header>
 
+  @if (avisos.estado() === 'inactivo' || avisos.estado() === 'ios-instalar') {
+    <a class="sugerencia" routerLink="/admin/avisos">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 9a6 6 0 1 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0" />
+      </svg>
+      <span>
+        <strong>Activa los avisos</strong>
+        Entérate de cada cita nueva sin abrir el panel.
+      </span>
+    </a>
+  }
+
   <nav class="semanas" aria-label="Cambiar de semana">
     <button type="button" class="icono" (click)="ir(-1)" [disabled]="ocupado()">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>

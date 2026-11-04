@@ -1,0 +1,46 @@
+{
+  "id": "/admin",
+  "name": "Panel Nails Ivonne",
+  "short_name": "Panel Ivonne",
+  "description": "Agenda, citas y catálogo de Nails Ivonne.",
+  "lang": "es-MX",
+  "dir": "ltr",
+  "start_url": "/admin",
+  "scope": "/admin",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#3e1224",
+  "theme_color": "#3e1224",
+  "icons": [
+    {
+      "src": "/brand/app/panel-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/app/panel-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/app/panel-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Agenda",
+      "url": "/admin",
+      "icons": [{ "src": "/brand/app/panel-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Agregar diseño",
+      "url": "/admin/nuevo",
+      "icons": [{ "src": "/brand/app/panel-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "id": "/",
+  "name": "Nails Ivonne",
+  "short_name": "Nails Ivonne",
+  "description": "Diseños de uñas en Guadalajara: catálogo de trabajos reales y agenda para apartar tu cita.",
+  "lang": "es-MX",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf6f0",
+  "theme_color": "#faf6f0",
+  "categories": ["beauty", "lifestyle"],
+  "icons": [
+    {
+      "src": "/brand/app/icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/app/icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/app/icono-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Agendar cita",
+      "url": "/#agenda",
+      "icons": [{ "src": "/brand/app/icono-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Ver catálogo",
+      "url": "/#catalogo",
+      "icons": [{ "src": "/brand/app/icono-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

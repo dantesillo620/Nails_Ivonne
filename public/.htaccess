@@ -4,6 +4,17 @@
 #
 # La API (CakePHP) vive en /api: tiene su propio .htaccess y estas reglas no la tocan.
 Options -Indexes
+
+# Manifests de las apps instalables
+AddType application/manifest+json .webmanifest
+
+# El service worker y su índice siempre se revisan: si se quedan en caché, las versiones
+# nuevas del sitio tardarían en llegar a quien ya lo instaló.
+<IfModule mod_headers.c>
+  <FilesMatch "^(ngsw\.json|ngsw-worker\.js|safety-worker\.js|worker-basic\.min\.js)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
 DirectorySlash Off
 RewriteEngine On
 

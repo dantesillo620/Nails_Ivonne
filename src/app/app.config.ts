@@ -1,6 +1,7 @@
 import {
   ApplicationConfig,
   inject,
+  isDevMode,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
@@ -14,6 +15,7 @@ import {
   withInMemoryScrolling,
   withRouterConfig,
 } from '@angular/router';
+import { provideServiceWorker } from '@angular/service-worker';
 import { panelInterceptor } from './admin/sesion.service';
 import { routes } from './app.routes';
 import { SeoTitleStrategy } from './core/seo/seo-title.strategy';
@@ -35,5 +37,11 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => inject(ViewportScroller).setOffset([0, ALTO_ENCABEZADO])),
     { provide: TitleStrategy, useClass: SeoTitleStrategy },
     provideClientHydration(withEventReplay()),
+    // App instalable y notificaciones del panel. Solo en el sitio compilado (no con `npm start`).
+    // Se registra cuando la página ya cargó, para no competir con la primera visita.
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
 };

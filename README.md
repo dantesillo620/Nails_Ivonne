@@ -18,6 +18,7 @@ datos y el sitio lo lee de `/api` (ver [Catálogo](#catálogo)).
 | `npm start` | Servidor de desarrollo en http://localhost:4200; `/api` va a la API local |
 | `npm run build` | Descarga el catálogo de la API y genera el sitio en `dist/nails-ivonne/browser` |
 | `npx ng test` | Ejecuta las pruebas |
+| `npm run iconos` | Vuelve a generar los íconos de las apps instalables desde `public/brand/app/*.svg` (macOS) |
 | `npm run fotos -- "<archivo>" ni-37` | Genera las copias WebP y la vista previa JPEG de una foto nueva (macOS) |
 
 ## Datos del negocio y textos
@@ -102,6 +103,27 @@ Los cambios se ven en el sitio al recargar, sin compilar.
 
 `npm run fotos` sigue sirviendo para preparar fotos a mano (imprime el `INSERT` para MySQL),
 pero el camino normal es el panel.
+
+## App instalable y avisos
+
+El sitio compilado es una **PWA** (service worker de Angular, `ngsw-config.json`). Con
+`npm start` no hay service worker: se prueba con `npm run build` y un servidor.
+
+- **Dos apps.** Desde el sitio se instala *Nails Ivonne* (`manifest.webmanifest`, abre la
+  página). Dentro de `/admin`, el panel cambia el manifest, el ícono de iPhone y el color, así
+  que desde ahí se instala *Panel Ivonne* (`panel.webmanifest`, abre en la agenda, ícono ciruela).
+  En Chrome, Edge y Android el panel muestra un botón **Instalar** en *Avisos*. En iPhone se instala
+  desde Safari: *Compartir → Agregar a inicio*.
+- **Sin internet** se siguen viendo las páginas visitadas y el catálogo guardado. Las navegaciones
+  piden primero la red (`freshness`) y, sin conexión, usan `index.csr.html`.
+- **Versiones nuevas.** Se descargan en segundo plano y se aplican en la siguiente navegación con
+  una recarga completa, para no mezclar archivos de dos versiones.
+- **Avisos (Web Push)** en la pestaña *Avisos* del panel: *Nueva cita por confirmar* cada vez que
+  alguien aparta (al tocarlo abre la semana de la cita) y un resumen del día cada mañana. Se activan
+  en cada dispositivo. **En iPhone y iPad solo funcionan con el panel instalado en la pantalla de
+  inicio** (iOS 16.4 o más reciente): es una regla de Apple. El panel lo explica paso a paso.
+- Íconos en `public/brand/app/`: el dibujo de los *maskable* va más chico porque Android lo
+  recorta. Se generan con `npm run iconos`.
 
 ## Identidad visual
 

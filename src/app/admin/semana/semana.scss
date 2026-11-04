@@ -12,6 +12,40 @@ h1 {
   }
 }
 
+.sugerencia {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  background: var(--ciruela);
+  color: var(--marfil);
+  text-decoration: none;
+
+  svg {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    fill: none;
+    stroke: var(--dorado-claro);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  span {
+    display: grid;
+    font-size: 0.9rem;
+    color: color-mix(in srgb, var(--marfil) 80%, transparent);
+  }
+
+  strong {
+    font-weight: 500;
+    color: var(--marfil);
+  }
+}
+
 .semanas {
   display: flex;
   align-items: center;

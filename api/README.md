@@ -102,9 +102,28 @@ no puede leerla.
 | POST | `/admin/citas` | Cita que llegó por otro lado; queda confirmada y puede ser a cualquier hora |
 | POST | `/admin/bloqueos` | `{fecha, hora?, motivo?}`; sin hora bloquea el día completo |
 | DELETE | `/admin/bloqueos/{id}` | Quita el bloqueo |
+| GET | `/admin/push` | `{clavePublica \| null, dispositivos}` de esta cuenta |
+| POST | `/admin/push/suscripciones` | `{endpoint, keys: {p256dh, auth}, dispositivo?}` del navegador; si el endpoint ya existe se reemplaza |
+| POST | `/admin/push/suscripciones/quitar` | `{endpoint}`: ese dispositivo deja de recibir avisos (POST porque algunos servidores descartan el cuerpo de un DELETE) |
+| POST | `/admin/push/prueba` | Aviso de prueba a los dispositivos de esta cuenta |
 
 Los errores de datos responden 422 con `{message, errores: {campo: mensaje}}`, en español y listos
 para mostrarse.
+
+### Avisos (Web Push)
+
+`App\Push\Notificador` manda las notificaciones con `minishlink/web-push` (con el cliente HTTP de
+CakePHP) y el formato del service worker de Angular. Los dispositivos que el servicio de push da por
+perdidos se borran solos. Nunca lanza errores: si un aviso falla, la cita se guarda igual (queda en
+`logs/error.log`).
+
+- **Al apartar una cita** desde la página: *Nueva cita por confirmar*, a todos los dispositivos.
+- **Resumen del día:** `bin/cake agenda resumen` manda *Hoy tienes N citas* con las horas y las
+  pendientes. Usa el día de Guadalajara, sin importar la zona del servidor, y si no hay nada no manda
+  aviso. Va en un cron cada mañana (ver Producción).
+- **Claves VAPID:** `bin/cake push claves` las genera; van en `config/app_local.php` (`Push`), nunca en
+  git. Cada servidor tiene las suyas, y si cambian, cada dispositivo tiene que volver a activar los avisos.
+- `bin/cake push prueba` manda un aviso a todos los dispositivos, para revisar desde la terminal.
 
 ### Fotos del panel
 
@@ -158,3 +177,11 @@ Pendiente de definir al rentar el hosting. Lo que ya se sabe:
 - **No borrar `public_html/fotos/` al publicar una versión nueva**: ahí están las fotos que subió
   Ivonne, y no están en git ni en el build.
 - Crear la cuenta de Ivonne con `bin/cake usuario crear` por SSH.
+- Generar las claves de avisos con `bin/cake push claves` y ponerlas en `config/app_local.php`. Cambiar
+  `Push.subject` por el dominio definitivo.
+- Cron del resumen diario (panel de Hostinger → Avanzado → Cron Jobs). El servidor suele estar en UTC:
+  las 14:00 UTC son las 8:00 de Guadalajara.
+  ```
+  0 14 * * *  cd ~/public_html/api && php bin/cake.php agenda resumen
+  ```
+- El sitio debe servirse por **HTTPS**: el service worker y los avisos no funcionan sin él.

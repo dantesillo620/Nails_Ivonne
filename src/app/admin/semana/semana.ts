@@ -3,7 +3,9 @@ import {
   Component,
   ElementRef,
   computed,
+  OnInit,
   inject,
+  input,
   signal,
   viewChild,
 } from '@angular/core';
@@ -17,6 +19,7 @@ import {
   telefonoLegible,
   whatsappCliente,
 } from '../panel-agenda.service';
+import { AvisosService } from '../avisos.service';
 import { explicarError } from '../sesion.service';
 
 /** Un horario del día: con cita, bloqueado o libre. */
@@ -61,8 +64,12 @@ function sumarDias(clave: string, n: number): string {
   templateUrl: './semana.html',
   styleUrl: './semana.scss',
 })
-export default class Semana {
+export default class Semana implements OnInit {
   protected readonly agenda = inject(PanelAgendaService);
+  protected readonly avisos = inject(AvisosService);
+
+  /** ?semana=AAAA-MM-DD: la notificación de una cita nueva abre la semana de esa cita. */
+  readonly semana = input<string>();
   private readonly dialogoRef = viewChild<ElementRef<HTMLDialogElement>>('ventana');
 
   protected readonly error = signal('');
@@ -155,8 +162,14 @@ export default class Semana {
 
   private temporizador: ReturnType<typeof setTimeout> | undefined;
 
-  constructor() {
-    void this.ir();
+  ngOnInit(): void {
+    const pedida = this.semana();
+    this.error.set('');
+    void this.agenda
+      .cargar(pedida && /^\d{4}-\d{2}-\d{2}$/.test(pedida) ? pedida : undefined)
+      .catch((e) => this.error.set(explicarError(e).mensaje));
+    // Para sugerir activar los avisos si en este dispositivo están apagados.
+    void this.avisos.cargar().catch(() => undefined);
   }
 
   /** -1 semana anterior, +1 siguiente, 0 la actual. */

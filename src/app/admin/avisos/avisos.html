@@ -1,0 +1,122 @@
+<section aria-labelledby="avisos-titulo">
+  <h1 id="avisos-titulo">Avisos</h1>
+  <p class="intro">
+    Recibe una notificación cada vez que alguien aparte una cita, y un resumen cada mañana.
+  </p>
+
+  <div class="tarjeta" aria-live="polite">
+    @switch (avisos.estado()) {
+      @case ('cargando') {
+        <p class="ayuda">Revisando este dispositivo…</p>
+      }
+      @case ('desarrollo') {
+        <h2>Solo en el sitio publicado</h2>
+        <p>
+          Los avisos usan el service worker, que no corre con <code>npm start</code>. Pruébalos con
+          el sitio compilado.
+        </p>
+      }
+      @case ('ios-instalar') {
+        <h2>Primero instala el panel en tu iPhone</h2>
+        <p>Apple solo deja mandar avisos a las apps de la pantalla de inicio. Es una sola vez:</p>
+        <ol class="pasos">
+          <li>Abre esta página en <strong>Safari</strong>.</li>
+          <li>
+            Toca <strong>Compartir</strong>
+            <svg class="icono-compartir" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3v12M8 7l4-4 4 4M5 12v8h14v-8" />
+            </svg>
+            y luego <strong>Agregar a inicio</strong>.
+          </li>
+          <li>
+            Abre <strong>Panel Ivonne</strong> desde su ícono y vuelve a esta sección para activar
+            los avisos.
+          </li>
+        </ol>
+      }
+      @case ('sin-soporte') {
+        <h2>Este navegador no tiene avisos</h2>
+        <p>
+          Usa Chrome, Edge, Firefox o Safari actualizados. En iPhone, primero agrega el panel a la
+          pantalla de inicio.
+        </p>
+      }
+      @case ('sin-servidor') {
+        <h2>Falta configurar el servidor</h2>
+        <p>Los avisos necesitan sus claves en el servidor (<code>bin/cake push claves</code>).</p>
+      }
+      @case ('bloqueado') {
+        <h2>Las notificaciones están bloqueadas</h2>
+        <p>
+          Este navegador tiene bloqueadas las notificaciones de esta página. Actívalas en los
+          ajustes del sitio (el candado junto a la dirección o, en el celular, Ajustes →
+          Notificaciones) y recarga.
+        </p>
+      }
+      @case ('inactivo') {
+        <h2>Los avisos están apagados en este dispositivo</h2>
+        <p>Al activarlos, el navegador te pedirá permiso para mostrar notificaciones.</p>
+        <button type="button" class="btn btn-primario" (click)="activar()" [disabled]="ocupado()">
+          {{ ocupado() ? 'Activando…' : 'Activar avisos aquí' }}
+        </button>
+      }
+      @case ('activo') {
+        <h2>
+          <svg class="palomita" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12l5 5 9-10" />
+          </svg>
+          Avisos activos en este dispositivo
+        </h2>
+        <div class="botones">
+          <button type="button" class="btn btn-primario" (click)="probar()" [disabled]="ocupado()">
+            Enviar un aviso de prueba
+          </button>
+          <button
+            type="button"
+            class="btn btn-secundario"
+            (click)="desactivar()"
+            [disabled]="ocupado()"
+          >
+            Desactivar
+          </button>
+        </div>
+      }
+    }
+
+    @if (mensaje(); as m) {
+      <p class="mensaje" [class.es-error]="m.error" role="status">{{ m.texto }}</p>
+    }
+  </div>
+
+  @if (avisos.instalable() && !avisos.instalada()) {
+    <div class="tarjeta">
+      <h2>Instala la app del panel</h2>
+      <p>Queda en tu pantalla de inicio y abre directo en la agenda, sin buscar la página.</p>
+      <button type="button" class="btn btn-secundario" (click)="instalar()">
+        Instalar Panel Ivonne
+      </button>
+    </div>
+  }
+
+  @if (avisos.dispositivos().length) {
+    <h2 class="subtitulo">Dispositivos con avisos</h2>
+    <ul class="dispositivos">
+      @for (d of avisos.dispositivos(); track d.id) {
+        <li>
+          <span>
+            <span class="nombre">
+              <strong>{{ d.dispositivo ?? 'Dispositivo' }}</strong>
+              @if (esEste(d)) {
+                <span class="marca">Este</span>
+              }
+            </span>
+            <span class="ayuda">desde el {{ creado(d) }}</span>
+          </span>
+          <button type="button" class="quitar" (click)="quitar(d)" [disabled]="ocupado()">
+            Quitar<span class="sr-only"> {{ d.dispositivo }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</section>

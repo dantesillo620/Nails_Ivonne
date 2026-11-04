@@ -1,6 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DOCUMENT,
+  DestroyRef,
   effect,
   inject,
   signal,
@@ -46,6 +48,9 @@ import { SesionService } from './sesion.service';
           </a>
           <a routerLink="/admin/catalogo" routerLinkActive="activa" ariaCurrentWhenActive="page"
             >Catálogo</a
+          >
+          <a routerLink="/admin/avisos" routerLinkActive="activa" ariaCurrentWhenActive="page"
+            >Avisos</a
           >
         </nav>
       }
@@ -168,6 +173,8 @@ export default class PanelLayout {
   protected readonly saliendo = signal(false);
 
   constructor() {
+    this.usarAppDelPanel();
+
     // El número de citas por confirmar se ve en la pestaña desde cualquier página del panel.
     effect(() => {
       if (this.sesion.usuario() && !untracked(() => this.agenda.semana())) {
@@ -176,6 +183,28 @@ export default class PanelLayout {
         });
       }
     });
+  }
+
+  /**
+   * Dentro del panel, "Agregar a pantalla de inicio" instala la app del panel (abre en la
+   * agenda, ícono ciruela) y no la del sitio. Al salir del panel se deja todo como estaba.
+   */
+  private usarAppDelPanel(): void {
+    const head = inject(DOCUMENT).head;
+    const cambios: [Element | null, string, string][] = [
+      [head.querySelector('link[rel="manifest"]'), 'href', '/panel.webmanifest'],
+      [head.querySelector('link[rel="apple-touch-icon"]'), 'href', '/brand/app/panel-180.png'],
+      [head.querySelector('meta[name="apple-mobile-web-app-title"]'), 'content', 'Panel Ivonne'],
+      [head.querySelector('meta[name="theme-color"]'), 'content', '#3e1224'],
+    ];
+    const antes = cambios.map(([el, attr]) => el?.getAttribute(attr) ?? null);
+    for (const [el, attr, valor] of cambios) el?.setAttribute(attr, valor);
+    inject(DestroyRef).onDestroy(() =>
+      cambios.forEach(([el, attr], i) => {
+        const v = antes[i];
+        if (el && v !== null) el.setAttribute(attr, v);
+      }),
+    );
   }
 
   protected async salir(): Promise<void> {

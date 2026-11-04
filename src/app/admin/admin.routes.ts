@@ -37,6 +37,12 @@ export const ADMIN_ROUTES: Routes = [
             loadComponent: () => import('./lista/lista'),
           },
           {
+            path: 'avisos',
+            title: 'Avisos',
+            data: PRIVADA,
+            loadComponent: () => import('./avisos/avisos'),
+          },
+          {
             path: 'nuevo',
             title: 'Nuevo diseño',
             data: PRIVADA,
