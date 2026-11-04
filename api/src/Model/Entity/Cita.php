@@ -14,6 +14,7 @@ use Cake\ORM\Entity;
  * @property string $estado
  * @property bool|null $ocupa
  * @property string|null $nota
+ * @property \Cake\I18n\DateTime|null $recordada Cuándo se le recordó a Ivonne.
  * @property \Cake\I18n\DateTime|null $created
  * @property \Cake\I18n\DateTime|null $modified
  * @property array<\App\Model\Entity\Trabajo> $trabajos

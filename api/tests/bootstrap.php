@@ -15,6 +15,7 @@ declare(strict_types=1);
  * @license   https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\Cache\Cache;
 use Cake\Chronos\Chronos;
 use Cake\Core\Configure;
 use Cake\TestSuite\ConnectionHelper;
@@ -56,5 +57,14 @@ ConnectionHelper::addTestAliases();
 // load schema from a SQL dump file with
 // use Cake\TestSuite\Fixture\SchemaLoader;
 // (new SchemaLoader())->loadSqlFiles('./tests/schema.sql', 'test');
+
+// Las pruebas nunca mandan avisos reales: sin claves VAPID el Notificador no envía nada.
+// Las que necesitan claves las ponen ellas mismas.
+Configure::write('Push.publicKey', null);
+Configure::write('Push.privateKey', null);
+
+// La caché de esquemas guarda las columnas de cada tabla: si una migración nueva agrega una,
+// el ORM la ignoraría en silencio. Se limpia antes de correr las pruebas.
+Cache::clear('_cake_model_');
 
 (new Migrator())->run();

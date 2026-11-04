@@ -11,7 +11,7 @@ class PushControllerTest extends TestCase
 {
     use IntegrationTestTrait;
 
-    protected array $fixtures = ['app.Usuarios', 'app.PushSuscripciones'];
+    protected array $fixtures = ['app.Usuarios', 'app.PushSuscripciones', 'app.Ajustes'];
 
     private const SUSCRIPCION = [
         'endpoint' => 'https://fcm.googleapis.com/fcm/send/compu-nueva',
@@ -93,5 +93,23 @@ class PushControllerTest extends TestCase
         $this->post('/admin/push/prueba');
 
         $this->assertResponseCode(503);
+    }
+
+    public function testElegirLaAnticipacionDeLosRecordatorios(): void
+    {
+        $this->conSesion();
+        $this->get('/admin/push');
+        $this->assertSame(60, $this->respuesta()['recordatorioMinutos']);
+
+        $this->conSesion();
+        $this->patch('/admin/push/ajustes', ['recordatorioMinutos' => '120']);
+        $this->assertResponseOk();
+        $this->conSesion();
+        $this->get('/admin/push');
+        $this->assertSame(120, $this->respuesta()['recordatorioMinutos']);
+
+        $this->conSesion();
+        $this->patch('/admin/push/ajustes', ['recordatorioMinutos' => 45]);
+        $this->assertResponseCode(422);
     }
 }

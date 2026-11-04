@@ -86,6 +86,9 @@ export class AvisosService {
 
   private readonly clave = signal<string | null | undefined>(undefined);
   readonly dispositivos = signal<readonly Dispositivo[]>([]);
+  /** Minutos antes de cada cita para el recordatorio (0: apagado). Aplica a todo el panel. */
+  readonly recordatorioMinutos = signal<number | null>(null);
+  readonly anticipaciones = signal<readonly number[]>([]);
   private readonly permiso = signal<NotificationPermission | 'sin-soporte'>(
     typeof Notification === 'undefined' ? 'sin-soporte' : Notification.permission,
   );
@@ -113,10 +116,17 @@ export class AvisosService {
 
   async cargar(): Promise<void> {
     const r = await firstValueFrom(
-      this.http.get<{ clavePublica: string | null; dispositivos: Dispositivo[] }>(this.api),
+      this.http.get<{
+        clavePublica: string | null;
+        dispositivos: Dispositivo[];
+        recordatorioMinutos: number;
+        anticipaciones: number[];
+      }>(this.api),
     );
     this.clave.set(r.clavePublica);
     this.dispositivos.set(r.dispositivos);
+    this.recordatorioMinutos.set(r.recordatorioMinutos);
+    this.anticipaciones.set(r.anticipaciones);
   }
 
   /** Pide permiso al navegador y registra este dispositivo. */
@@ -157,6 +167,15 @@ export class AvisosService {
       await this.swPush.unsubscribe().catch(() => undefined);
     }
     await this.cargar();
+  }
+
+  async guardarRecordatorio(minutos: number): Promise<void> {
+    const r = await firstValueFrom(
+      this.http.patch<{ recordatorioMinutos: number }>(`${this.api}/ajustes`, {
+        recordatorioMinutos: minutos,
+      }),
+    );
+    this.recordatorioMinutos.set(r.recordatorioMinutos);
   }
 
   async probar(): Promise<{ enviadas: number; fallidas: number }> {

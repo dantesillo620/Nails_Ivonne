@@ -60,6 +60,7 @@ return function (RouteBuilder $routes): void {
         // POST y no DELETE: algunos servidores descartan el cuerpo de un DELETE.
         $builder->post('/push/suscripciones/quitar', ['controller' => 'Push', 'action' => 'quitar']);
         $builder->post('/push/prueba', ['controller' => 'Push', 'action' => 'prueba']);
+        $builder->patch('/push/ajustes', ['controller' => 'Push', 'action' => 'ajustes']);
         $builder->post('/bloqueos', ['controller' => 'Agenda', 'action' => 'bloquear']);
         $builder->delete('/bloqueos/{id}', ['controller' => 'Agenda', 'action' => 'desbloquear'])
             ->setPatterns(['id' => '\d+'])

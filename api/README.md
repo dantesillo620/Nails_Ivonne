@@ -52,7 +52,7 @@ Desde `api/`:
 | `$PHP /opt/homebrew/bin/composer serve` | API en http://127.0.0.1:8765 |
 | `$PHP /opt/homebrew/bin/composer test` | Pruebas (usan SQLite, no necesitan MySQL) |
 | `$PHP /opt/homebrew/bin/composer cs-check` | Revisa el estilo de código de CakePHP |
-| `$PHP bin/cake.php migrations migrate` | Aplica las migraciones pendientes |
+| `$PHP bin/cake.php migrations migrate` | Aplica las migraciones pendientes. Después corre `$PHP bin/cake.php schema_cache clear`: CakePHP guarda las columnas de cada tabla y no vería las nuevas |
 
 No uses `bin/cake.php server`: arranca el `php` del PATH en lugar del PHP 8.3.
 
@@ -118,6 +118,9 @@ perdidos se borran solos. Nunca lanza errores: si un aviso falla, la cita se gua
 `logs/error.log`).
 
 - **Al apartar una cita** desde la página: *Nueva cita por confirmar*, a todos los dispositivos.
+- **Recordatorio antes de cada cita:** `bin/cake agenda recordatorios` avisa *En 1 h: Ana* con la hora y
+  los diseños, una sola vez por cita (`citas.recordada`). La anticipación la elige Ivonne en *Avisos*
+  (30 min a 3 h, o apagado; ajuste `avisos`). Va en un cron cada 10 minutos.
 - **Resumen del día:** `bin/cake agenda resumen` manda *Hoy tienes N citas* con las horas y las
   pendientes. Usa el día de Guadalajara, sin importar la zona del servidor, y si no hay nada no manda
   aviso. Va en un cron cada mañana (ver Producción).
@@ -182,6 +185,8 @@ Pendiente de definir al rentar el hosting. Lo que ya se sabe:
 - Cron del resumen diario (panel de Hostinger → Avanzado → Cron Jobs). El servidor suele estar en UTC:
   las 14:00 UTC son las 8:00 de Guadalajara.
   ```
-  0 14 * * *  cd ~/public_html/api && php bin/cake.php agenda resumen
+  0 14 * * *     cd ~/public_html/api && php bin/cake.php agenda resumen
+  */10 * * * *   cd ~/public_html/api && php bin/cake.php agenda recordatorios
   ```
+- Después de cada `migrations migrate`, correr `bin/cake schema_cache clear`.
 - El sitio debe servirse por **HTTPS**: el service worker y los avisos no funcionan sin él.

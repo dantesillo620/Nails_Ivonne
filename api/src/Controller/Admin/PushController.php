@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Command\AgendaCommand;
 use App\Model\Entity\PushSuscripcion;
 use App\Model\Entity\Usuario;
+use App\Model\Table\AjustesTable;
 use App\Model\Table\PushSuscripcionesTable;
 use App\Push\Notificador;
 use Cake\Core\Configure;
@@ -19,6 +21,7 @@ use Cake\Http\Exception\UnauthorizedException;
 class PushController extends AppController
 {
     protected PushSuscripcionesTable $Suscripciones;
+    protected AjustesTable $Ajustes;
 
     /**
      * @inheritDoc
@@ -27,11 +30,12 @@ class PushController extends AppController
     {
         parent::initialize();
         $this->Suscripciones = $this->fetchTable('PushSuscripciones');
+        $this->Ajustes = $this->fetchTable('Ajustes');
     }
 
     /**
-     * GET /admin/push: la clave pública (null si el servidor no tiene claves) y los
-     * dispositivos de esta cuenta con avisos activos.
+     * GET /admin/push: la clave pública (null si el servidor no tiene claves), los
+     * dispositivos de esta cuenta con avisos activos y la anticipación de los recordatorios.
      *
      * @return void
      */
@@ -39,6 +43,8 @@ class PushController extends AppController
     {
         $this->json([
             'clavePublica' => Configure::read('Push.publicKey') ?: null,
+            'recordatorioMinutos' => AgendaCommand::anticipacion($this->Ajustes->leer('avisos')),
+            'anticipaciones' => AgendaCommand::ANTICIPACIONES,
             'dispositivos' => $this->Suscripciones->find()
                 ->where(['usuario_id' => $this->usuario()->id])
                 ->orderBy(['created' => 'DESC'])
@@ -100,6 +106,29 @@ class PushController extends AppController
             'usuario_id' => $this->usuario()->id,
         ]);
         $this->json(['ok' => true, 'borradas' => $borradas]);
+    }
+
+    /**
+     * PATCH /admin/push/ajustes con {recordatorioMinutos}: cuánto antes de cada cita llega el
+     * recordatorio (0 lo apaga). Es para todas las cuentas del panel.
+     *
+     * @return void
+     */
+    public function ajustes(): void
+    {
+        $this->request->allowMethod(['patch', 'put']);
+        $minutos = filter_var($this->request->getData('recordatorioMinutos'), FILTER_VALIDATE_INT);
+        if (!in_array($minutos, AgendaCommand::ANTICIPACIONES, true)) {
+            $this->response = $this->response->withStatus(422);
+            $this->json([
+                'message' => 'Elige una de las opciones.',
+                'errores' => ['recordatorioMinutos' => 'Opción no válida.'],
+            ]);
+
+            return;
+        }
+        $this->Ajustes->guardar('avisos', ['recordatorioMinutos' => $minutos] + $this->Ajustes->leer('avisos'));
+        $this->json(['recordatorioMinutos' => $minutos]);
     }
 
     /**

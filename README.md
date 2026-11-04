@@ -119,7 +119,9 @@ El sitio compilado es una **PWA** (service worker de Angular, `ngsw-config.json`
 - **Versiones nuevas.** Se descargan en segundo plano y se aplican en la siguiente navegación con
   una recarga completa, para no mezclar archivos de dos versiones.
 - **Avisos (Web Push)** en la pestaña *Avisos* del panel: *Nueva cita por confirmar* cada vez que
-  alguien aparta (al tocarlo abre la semana de la cita) y un resumen del día cada mañana. Se activan
+  alguien aparta (al tocarlo abre la semana de la cita), un **recordatorio antes de cada cita**
+  (Ivonne elige con cuánta anticipación, o lo apaga) y un resumen del día cada mañana. A las
+  clientas no se les manda nada automático: Ivonne les escribe por WhatsApp desde el panel. Se activan
   en cada dispositivo. **En iPhone y iPad solo funcionan con el panel instalado en la pantalla de
   inicio** (iOS 16.4 o más reciente): es una regla de Apple. El panel lo explica paso a paso.
 - Íconos en `public/brand/app/`: el dibujo de los *maskable* va más chico porque Android lo

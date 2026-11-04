@@ -1,7 +1,8 @@
 <section aria-labelledby="avisos-titulo">
   <h1 id="avisos-titulo">Avisos</h1>
   <p class="intro">
-    Recibe una notificación cada vez que alguien aparte una cita, y un resumen cada mañana.
+    Recibe una notificación cada vez que alguien aparte una cita, un recordatorio antes de cada una
+    y un resumen cada mañana.
   </p>
 
   <div class="tarjeta" aria-live="polite">
@@ -87,6 +88,22 @@
       <p class="mensaje" [class.es-error]="m.error" role="status">{{ m.texto }}</p>
     }
   </div>
+
+  @if (avisos.recordatorioMinutos() !== null) {
+    <div class="tarjeta">
+      <h2>Recordatorios de tus citas</h2>
+      <p>Un aviso antes de cada cita, con el nombre de la clienta y sus diseños.</p>
+      <label for="recordatorio" class="sr-only">Cuándo recordarte cada cita</label>
+      <select id="recordatorio" (change)="cambiarRecordatorio($event)" [disabled]="ocupado()">
+        @for (m of avisos.anticipaciones(); track m) {
+          <option [value]="m" [selected]="m === avisos.recordatorioMinutos()">
+            {{ anticipacion(m) }}
+          </option>
+        }
+      </select>
+      <p class="ayuda">Se aplica a todos los dispositivos con avisos activos.</p>
+    </div>
+  }
 
   @if (avisos.instalable() && !avisos.instalada()) {
     <div class="tarjeta">

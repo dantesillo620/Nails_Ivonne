@@ -25,6 +25,34 @@ export default class Avisos {
     void this.avisos.cargar().catch((e) => this.decir(explicarError(e).mensaje, true));
   }
 
+  protected anticipacion(minutos: number): string {
+    if (minutos === 0) return 'No recordarme';
+    if (minutos < 60) return `${minutos} minutos antes`;
+    const h = minutos / 60;
+    return h === 1 ? '1 hora antes' : `${h} horas antes`;
+  }
+
+  protected async cambiarRecordatorio(event: Event): Promise<void> {
+    const select = event.target as HTMLSelectElement;
+    const minutos = Number(select.value);
+    await this.hacer(
+      async () => {
+        await this.avisos.guardarRecordatorio(minutos);
+        this.decir(
+          minutos
+            ? `Te avisaremos ${this.anticipacion(minutos)} de cada cita.`
+            : 'Ya no recibirás recordatorios de tus citas.',
+          false,
+        );
+      },
+      (e) => {
+        // Si no se guardó, el selector vuelve a lo que de verdad está guardado.
+        select.value = String(this.avisos.recordatorioMinutos() ?? 60);
+        return explicarError(e).mensaje;
+      },
+    );
+  }
+
   protected creado(d: Dispositivo): string {
     return d.creado ? fmtFecha.format(new Date(d.creado)) : '';
   }
