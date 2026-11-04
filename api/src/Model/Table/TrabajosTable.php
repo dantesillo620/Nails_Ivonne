@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -15,6 +16,8 @@ use Cake\Validation\Validator;
  */
 class TrabajosTable extends Table
 {
+    use LocatorAwareTrait;
+
     /**
      * @inheritDoc
      */
@@ -79,6 +82,50 @@ class TrabajosTable extends Table
             ->contain(['Categorias'])
             ->where(['Trabajos.visible' => true])
             ->orderBy(['Trabajos.orden' => 'ASC', 'Trabajos.id' => 'ASC']);
+    }
+
+    /** Todos los diseños, también los ocultos, en el orden del catálogo (para el panel). */
+    public function findPanel(SelectQuery $query): SelectQuery
+    {
+        return $query
+            ->contain(['Categorias'])
+            ->orderBy(['Trabajos.orden' => 'ASC', 'Trabajos.id' => 'ASC']);
+    }
+
+    /**
+     * Código para un diseño nuevo: el número más alto usado + 1 ('NI-37').
+     * Se recuerda el último entregado (ajustes.catalogo) para no reusar el código de
+     * un diseño borrado: alguien podría tener guardado su enlace.
+     *
+     * @return string
+     */
+    public function siguienteCodigo(): string
+    {
+        $ajustes = $this->fetchTable('Ajustes');
+        assert($ajustes instanceof AjustesTable);
+        $maximo = (int)($ajustes->leer('catalogo')['ultimoNumero'] ?? 0);
+        foreach ($this->find()->select(['codigo'])->disableHydration()->all() as $fila) {
+            if (preg_match('/^NI-(\d+)$/', (string)$fila['codigo'], $m)) {
+                $maximo = max($maximo, (int)$m[1]);
+            }
+        }
+        $siguiente = $maximo + 1;
+        $ajustes->guardar('catalogo', ['ultimoNumero' => $siguiente] + $ajustes->leer('catalogo'));
+
+        return sprintf('NI-%02d', $siguiente);
+    }
+
+    /**
+     * Orden para que un diseño nuevo aparezca primero.
+     *
+     * @return int
+     */
+    public function ordenAlInicio(): int
+    {
+        $minimo = $this->find()->select(['minimo' => $this->find()->func()->min('orden')])
+            ->disableHydration()->first();
+
+        return (int)($minimo['minimo'] ?? 1) - 1;
     }
 
     /** Busca por código sin importar mayúsculas ('ni-25' o 'NI-25'). */

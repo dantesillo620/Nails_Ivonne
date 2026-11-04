@@ -99,4 +99,31 @@ class Trabajo extends Entity
 
         return $datos;
     }
+
+    /**
+     * Forma que usa el panel: incluye el id interno, si está visible y su orden.
+     * Requiere la categoría cargada con contain().
+     *
+     * @return array<string, mixed>
+     */
+    public function aPanel(): array
+    {
+        return [
+            'id' => $this->id,
+            'codigo' => $this->codigo,
+            'titulo' => $this->titulo,
+            'alt' => $this->alt,
+            'categoria' => $this->categoria?->slug,
+            'destacado' => $this->destacado,
+            'visible' => $this->visible,
+            'orden' => $this->orden,
+            'imagen' => [
+                'base' => $this->imagen_base,
+                'width' => $this->imagen_ancho,
+                'height' => $this->imagen_alto,
+                'widths' => $this->anchos(),
+            ],
+            'modificado' => $this->modified?->toIso8601String(),
+        ];
+    }
 }

@@ -98,6 +98,15 @@ return [
      * Configure the cache adapters.
      */
     'Cache' => [
+        // Intentos fallidos de inicio de sesión, para frenar a quien intente adivinar la contraseña.
+        'intentos' => [
+            'className' => FileEngine::class,
+            'prefix' => 'intentos_',
+            'path' => CACHE . 'intentos' . DS,
+            'duration' => '+15 minutes',
+            'url' => env('CACHE_INTENTOS_URL', null),
+        ],
+
         'default' => [
             'className' => FileEngine::class,
             'path' => CACHE,
@@ -204,6 +213,20 @@ return [
      *   tienen página prerenderizada (los agregados desde el panel). En Hostinger la API
      *   vive en public_html/api, así que el build está en la carpeta de arriba.
      */
+    /*
+     * Fotos que se suben desde el panel.
+     *
+     * - dir: carpeta donde se guardan (subcarpetas web/ y og/). En Hostinger, public_html/fotos/trabajos,
+     *   fuera de la API y del build: al publicar una versión nueva del sitio no se deben borrar.
+     * - url: ruta pública de esa carpeta.
+     * - maxBytes: tamaño máximo del archivo que llega (el panel ya la reduce antes de subirla).
+     */
+    'Fotos' => [
+        'dir' => env('FOTOS_DIR', dirname(ROOT) . DS . 'fotos' . DS . 'trabajos'),
+        'url' => env('FOTOS_URL', '/fotos/trabajos'),
+        'maxBytes' => 15 * 1024 * 1024,
+    ],
+
     'Sitio' => [
         'nombre' => 'Nails Ivonne',
         'shell' => env('SITIO_SHELL', dirname(ROOT) . DS . 'index.csr.html'),
@@ -430,7 +453,17 @@ return [
      * To use database sessions, load the SQL file located at config/schema/sessions.sql
      */
     'Session' => [
-        'defaults' => 'php',
+        // Archivos en tmp/sessions, con su propia limpieza (no depende del /tmp compartido del hosting).
+        'defaults' => 'cake',
+        'cookie' => 'nails_sesion',
+        // Minutos sin actividad antes de cerrar la sesión del panel: 30 días, para que
+        // Ivonne no tenga que entrar a cada rato desde su celular.
+        'timeout' => 60 * 24 * 30,
+        'ini' => [
+            'session.cookie_lifetime' => 60 * 60 * 24 * 30,
+            'session.cookie_httponly' => true,
+            'session.cookie_samesite' => 'Lax',
+        ],
     ],
 
     /**

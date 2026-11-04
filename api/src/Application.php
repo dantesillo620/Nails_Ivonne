@@ -17,6 +17,10 @@ declare(strict_types=1);
 namespace App;
 
 use App\Middleware\HostHeaderMiddleware;
+use Authentication\AuthenticationService;
+use Authentication\AuthenticationServiceInterface;
+use Authentication\AuthenticationServiceProviderInterface;
+use Authentication\Middleware\AuthenticationMiddleware;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Datasource\FactoryLocator;
@@ -29,6 +33,7 @@ use Cake\Http\MiddlewareQueue;
 use Cake\ORM\Locator\TableLocator;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Application setup class.
@@ -38,7 +43,7 @@ use Cake\Routing\Middleware\RoutingMiddleware;
  *
  * @extends \Cake\Http\BaseApplication<\App\Application>
  */
-class Application extends BaseApplication
+class Application extends BaseApplication implements AuthenticationServiceProviderInterface
 {
     /**
      * Load all the application configuration and bootstrap logic.
@@ -95,9 +100,37 @@ class Application extends BaseApplication
             // https://book.cakephp.org/5/en/security/csrf.html#cross-site-request-forgery-csrf-middleware
             ->add(new CsrfProtectionMiddleware([
                 'httponly' => true,
-            ]));
+            ]))
+
+            // Identifica a quien tiene sesión abierta en el panel (ver getAuthenticationService()).
+            ->add(new AuthenticationMiddleware($this));
 
         return $middlewareQueue;
+    }
+
+    /**
+     * Sesión del panel: se guarda solo el id del usuario y en cada petición se vuelve a
+     * leer de la base, así una cuenta borrada pierde el acceso al momento.
+     * El inicio de sesión lo hace AuthController (verifica la contraseña y limita intentos).
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request Petición.
+     * @return \Authentication\AuthenticationServiceInterface
+     */
+    public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
+    {
+        $service = new AuthenticationService();
+        $service->loadAuthenticator('Authentication.PrimaryKeySession', [
+            'sessionKey' => 'Panel',
+            'identifier' => [
+                'Authentication.Token' => [
+                    'tokenField' => 'id',
+                    'dataField' => 'key',
+                    'resolver' => ['className' => 'Authentication.Orm', 'userModel' => 'Usuarios'],
+                ],
+            ],
+        ]);
+
+        return $service;
     }
 
     /**

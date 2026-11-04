@@ -27,5 +27,23 @@ return function (RouteBuilder $routes): void {
             ->setPatterns(['codigo' => '[A-Za-z0-9-]{1,20}'])
             ->setPass(['codigo']);
         $builder->get('/sitemap.xml', ['controller' => 'Sitio', 'action' => 'sitemap']);
+
+        // Sesión del panel.
+        $builder->get('/auth/sesion', ['controller' => 'Auth', 'action' => 'sesion']);
+        $builder->post('/auth/login', ['controller' => 'Auth', 'action' => 'login']);
+        $builder->post('/auth/logout', ['controller' => 'Auth', 'action' => 'logout']);
+    });
+
+    // Panel de administración: todo pide sesión (Admin\AppController).
+    $routes->prefix('Admin', ['path' => '/admin'], function (RouteBuilder $builder): void {
+        $builder->get('/catalogo', ['controller' => 'Catalogo', 'action' => 'index']);
+        $builder->post('/trabajos', ['controller' => 'Catalogo', 'action' => 'add']);
+        $builder->put('/trabajos/orden', ['controller' => 'Catalogo', 'action' => 'orden']);
+        $builder->patch('/trabajos/{id}', ['controller' => 'Catalogo', 'action' => 'edit'])
+            ->setPatterns(['id' => '\d+'])
+            ->setPass(['id']);
+        $builder->delete('/trabajos/{id}', ['controller' => 'Catalogo', 'action' => 'delete'])
+            ->setPatterns(['id' => '\d+'])
+            ->setPass(['id']);
     });
 };

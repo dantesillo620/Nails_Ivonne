@@ -44,6 +44,15 @@ return [
         'shell' => dirname(ROOT) . '/dist/nails-ivonne/browser/index.csr.html',
     ],
 
+    /*
+     * En local las fotos del panel se guardan en api/webroot (no se suben a git) y se sirven
+     * por /api, así el proxy de Angular las encuentra.
+     */
+    'Fotos' => [
+        'dir' => WWW_ROOT . 'fotos' . DS . 'trabajos',
+        'url' => '/api/fotos/trabajos',
+    ],
+
     'Datasources' => [
         'default' => [
             'host' => '127.0.0.1',

@@ -38,13 +38,13 @@ class OtrasTablasTest extends TestCase
         /** @var \App\Model\Table\UsuariosTable $usuarios */
         $usuarios = $this->getTableLocator()->get('Usuarios');
         $usuario = $usuarios->saveOrFail($usuarios->newEntity([
-            'email' => ' Ivonne@Ejemplo.com ',
+            'email' => ' Ana@Ejemplo.com ',
             'nombre' => 'Ivonne',
             'password' => 'una-contrasena-larga',
         ]));
 
         $guardado = $usuarios->get($usuario->id);
-        $this->assertSame('ivonne@ejemplo.com', $guardado->email);
+        $this->assertSame('ana@ejemplo.com', $guardado->email);
         $this->assertTrue(password_verify('una-contrasena-larga', $guardado->password));
         $this->assertArrayNotHasKey('password', json_decode((string)json_encode($guardado), true));
     }
