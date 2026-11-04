@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -37,6 +38,36 @@ class BloqueosTable extends Table
             ->scalar('motivo')
             ->maxLength('motivo', 120)
             ->allowEmptyString('motivo');
+    }
+
+    /**
+     * Bloqueos entre dos fechas (incluidas), en orden.
+     *
+     * @param \Cake\ORM\Query\SelectQuery $query Consulta.
+     * @param string $desde 'AAAA-MM-DD'.
+     * @param string $hasta 'AAAA-MM-DD'.
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function findEntre(SelectQuery $query, string $desde, string $hasta): SelectQuery
+    {
+        return $query
+            ->where(['Bloqueos.fecha >=' => $desde, 'Bloqueos.fecha <=' => $hasta])
+            ->orderBy(['Bloqueos.fecha' => 'ASC', 'Bloqueos.hora' => 'ASC']);
+    }
+
+    /**
+     * Si un bloqueo impide ese horario (el día completo o esa hora).
+     *
+     * @param string $fecha 'AAAA-MM-DD'.
+     * @param string $hora 'HH:MM'.
+     * @return bool
+     */
+    public function bloquea(string $fecha, string $hora): bool
+    {
+        return $this->exists([
+            'Bloqueos.fecha' => $fecha,
+            'OR' => ['Bloqueos.hora IS' => null, 'Bloqueos.hora' => $hora . ':00'],
+        ]);
     }
 
     /**

@@ -40,6 +40,47 @@ class Cita extends Entity
     ];
 
     /**
+     * Lo que se le devuelve a la clienta al apartar (sin datos de otras citas).
+     *
+     * @return array{id: int, fecha: string, hora: string, estado: string}
+     */
+    public function aPublico(): array
+    {
+        return [
+            'id' => $this->id,
+            'fecha' => $this->fecha->format('Y-m-d'),
+            'hora' => $this->hora->format('H:i'),
+            'estado' => $this->estado,
+        ];
+    }
+
+    /**
+     * Forma que usa el panel. Requiere los diseños cargados con contain().
+     *
+     * @return array<string, mixed>
+     */
+    public function aPanel(): array
+    {
+        return $this->aPublico() + [
+            'nombre' => $this->nombre,
+            'telefono' => $this->telefono,
+            'nota' => $this->nota,
+            'disenos' => array_map(fn(Trabajo $t) => [
+                'id' => $t->id,
+                'codigo' => $t->codigo,
+                'titulo' => $t->titulo,
+                'imagen' => [
+                    'base' => $t->imagen_base,
+                    'width' => $t->imagen_ancho,
+                    'height' => $t->imagen_alto,
+                    'widths' => $t->anchos(),
+                ],
+            ], $this->trabajos ?? []),
+            'creada' => $this->created?->toIso8601String(),
+        ];
+    }
+
+    /**
      * Si la cita ocupa su horario.
      *
      * @return bool

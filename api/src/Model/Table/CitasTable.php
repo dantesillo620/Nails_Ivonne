@@ -7,6 +7,7 @@ use App\Model\Entity\Cita;
 use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -32,7 +33,25 @@ class CitasTable extends Table
     }
 
     /**
-     * Deja el teléfono solo con dígitos y recorta espacios antes de validar.
+     * Deja el teléfono en formato internacional (solo dígitos, como lo usa wa.me) y recorta
+     * espacios antes de validar. El estudio está en Guadalajara: un número de 10 dígitos sin
+     * lada de país se toma como de México (52). Con '+' adelante se respeta el país escrito.
+     *
+     * @param string $telefono Lo que escribió la clienta.
+     * @return string
+     */
+    public static function normalizarTelefono(string $telefono): string
+    {
+        $digitos = (string)preg_replace('/\D/', '', $telefono);
+        if (str_starts_with(ltrim($telefono), '+')) {
+            return $digitos;
+        }
+
+        return strlen($digitos) === 10 ? '52' . $digitos : $digitos;
+    }
+
+    /**
+     * Normaliza el teléfono y recorta espacios antes de validar.
      *
      * @param \Cake\Event\EventInterface $event Evento.
      * @param \ArrayObject<string, mixed> $data Datos recibidos.
@@ -42,7 +61,7 @@ class CitasTable extends Table
     public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void
     {
         if (isset($data['telefono']) && is_string($data['telefono'])) {
-            $data['telefono'] = preg_replace('/\D/', '', $data['telefono']);
+            $data['telefono'] = self::normalizarTelefono($data['telefono']);
         }
         foreach (['nombre', 'nota'] as $campo) {
             if (isset($data[$campo]) && is_string($data[$campo])) {
@@ -64,7 +83,7 @@ class CitasTable extends Table
             ->scalar('telefono')
             ->requirePresence('telefono', 'create')
             ->notEmptyString('telefono', 'Escribe tu WhatsApp.')
-            ->lengthBetween('telefono', [8, 15], 'Revisa el número: incluye la lada.')
+            ->lengthBetween('telefono', [10, 15], 'Revisa el número: escribe los 10 dígitos con lada.')
             ->date('fecha', ['ymd'])
             ->requirePresence('fecha', 'create')
             ->time('hora')
@@ -89,6 +108,34 @@ class CitasTable extends Table
         );
 
         return $rules;
+    }
+
+    /**
+     * Citas pendientes o confirmadas entre dos fechas (incluidas), en orden.
+     *
+     * @param \Cake\ORM\Query\SelectQuery $query Consulta.
+     * @param string $desde 'AAAA-MM-DD'.
+     * @param string $hasta 'AAAA-MM-DD'.
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function findActivasEntre(SelectQuery $query, string $desde, string $hasta): SelectQuery
+    {
+        return $this->findEntre($query, $desde, $hasta)->where(['Citas.ocupa' => true]);
+    }
+
+    /**
+     * Todas las citas entre dos fechas (incluidas), también canceladas, en orden.
+     *
+     * @param \Cake\ORM\Query\SelectQuery $query Consulta.
+     * @param string $desde 'AAAA-MM-DD'.
+     * @param string $hasta 'AAAA-MM-DD'.
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function findEntre(SelectQuery $query, string $desde, string $hasta): SelectQuery
+    {
+        return $query
+            ->where(['Citas.fecha >=' => $desde, 'Citas.fecha <=' => $hasta])
+            ->orderBy(['Citas.fecha' => 'ASC', 'Citas.hora' => 'ASC', 'Citas.id' => 'ASC']);
     }
 
     /**

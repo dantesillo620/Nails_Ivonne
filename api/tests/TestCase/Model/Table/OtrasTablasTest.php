@@ -15,7 +15,7 @@ class OtrasTablasTest extends TestCase
         /** @var \App\Model\Table\AjustesTable $ajustes */
         $ajustes = $this->getTableLocator()->get('Ajustes');
 
-        $this->assertSame(['16:00', '18:00'], $ajustes->leer('agenda')['horas']);
+        $this->assertSame(['09:00', '11:00', '13:00', '15:00', '17:00', '19:00'], $ajustes->leer('agenda')['horas']['6']);
         $this->assertSame(['x' => 1], $ajustes->leer('no-existe', ['x' => 1]));
 
         $ajustes->guardar('agenda', ['horas' => ['17:00']]);

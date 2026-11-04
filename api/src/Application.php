@@ -98,9 +98,17 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/5/en/security/csrf.html#cross-site-request-forgery-csrf-middleware
-            ->add(new CsrfProtectionMiddleware([
+            ->add((new CsrfProtectionMiddleware([
                 'httponly' => true,
-            ]))
+            ]))->skipCheckCallback(function (ServerRequestInterface $request): bool {
+                // Pedir una cita es público y sin sesión: no hay nada que falsificar.
+                // Ver AgendaController::crear() (límite por IP y campo trampa).
+                $params = (array)$request->getAttribute('params');
+
+                return ($params['controller'] ?? null) === 'Agenda'
+                    && ($params['action'] ?? null) === 'crear'
+                    && empty($params['prefix']);
+            }))
 
             // Identifica a quien tiene sesión abierta en el panel (ver getAuthenticationService()).
             ->add(new AuthenticationMiddleware($this));

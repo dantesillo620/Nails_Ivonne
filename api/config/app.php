@@ -98,6 +98,14 @@ return [
      * Configure the cache adapters.
      */
     'Cache' => [
+        // Solicitudes de cita por IP (límite por hora).
+        'citas' => [
+            'className' => FileEngine::class,
+            'prefix' => 'citas_',
+            'path' => CACHE . 'citas' . DS,
+            'duration' => '+1 hour',
+            'url' => env('CACHE_CITAS_URL', null),
+        ],
         // Intentos fallidos de inicio de sesión, para frenar a quien intente adivinar la contraseña.
         'intentos' => [
             'className' => FileEngine::class,

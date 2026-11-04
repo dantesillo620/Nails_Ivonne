@@ -28,6 +28,10 @@ return function (RouteBuilder $routes): void {
             ->setPass(['codigo']);
         $builder->get('/sitemap.xml', ['controller' => 'Sitio', 'action' => 'sitemap']);
 
+        // Agenda pública.
+        $builder->get('/agenda/disponibilidad', ['controller' => 'Agenda', 'action' => 'disponibilidad']);
+        $builder->post('/agenda/citas', ['controller' => 'Agenda', 'action' => 'crear']);
+
         // Sesión del panel.
         $builder->get('/auth/sesion', ['controller' => 'Auth', 'action' => 'sesion']);
         $builder->post('/auth/login', ['controller' => 'Auth', 'action' => 'login']);
@@ -43,6 +47,16 @@ return function (RouteBuilder $routes): void {
             ->setPatterns(['id' => '\d+'])
             ->setPass(['id']);
         $builder->delete('/trabajos/{id}', ['controller' => 'Catalogo', 'action' => 'delete'])
+            ->setPatterns(['id' => '\d+'])
+            ->setPass(['id']);
+
+        $builder->get('/agenda', ['controller' => 'Agenda', 'action' => 'index']);
+        $builder->post('/citas', ['controller' => 'Agenda', 'action' => 'crear']);
+        $builder->patch('/citas/{id}', ['controller' => 'Agenda', 'action' => 'estado'])
+            ->setPatterns(['id' => '\d+'])
+            ->setPass(['id']);
+        $builder->post('/bloqueos', ['controller' => 'Agenda', 'action' => 'bloquear']);
+        $builder->delete('/bloqueos/{id}', ['controller' => 'Agenda', 'action' => 'desbloquear'])
             ->setPatterns(['id' => '\d+'])
             ->setPass(['id']);
     });
