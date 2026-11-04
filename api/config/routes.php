@@ -55,6 +55,11 @@ return function (RouteBuilder $routes): void {
         $builder->patch('/citas/{id}', ['controller' => 'Agenda', 'action' => 'estado'])
             ->setPatterns(['id' => '\d+'])
             ->setPass(['id']);
+        $builder->get('/push', ['controller' => 'Push', 'action' => 'index']);
+        $builder->post('/push/suscripciones', ['controller' => 'Push', 'action' => 'suscribir']);
+        // POST y no DELETE: algunos servidores descartan el cuerpo de un DELETE.
+        $builder->post('/push/suscripciones/quitar', ['controller' => 'Push', 'action' => 'quitar']);
+        $builder->post('/push/prueba', ['controller' => 'Push', 'action' => 'prueba']);
         $builder->post('/bloqueos', ['controller' => 'Agenda', 'action' => 'bloquear']);
         $builder->delete('/bloqueos/{id}', ['controller' => 'Agenda', 'action' => 'desbloquear'])
             ->setPatterns(['id' => '\d+'])

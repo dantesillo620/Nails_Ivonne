@@ -53,6 +53,14 @@ return [
         'url' => '/api/fotos/trabajos',
     ],
 
+    /*
+     * Claves de los avisos del panel: genéralas con `bin/cake push claves` y pégalas aquí.
+     */
+    'Push' => [
+        'publicKey' => null,
+        'privateKey' => null,
+    ],
+
     'Datasources' => [
         'default' => [
             'host' => '127.0.0.1',

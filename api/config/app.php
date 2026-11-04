@@ -235,6 +235,22 @@ return [
         'maxBytes' => 15 * 1024 * 1024,
     ],
 
+    /*
+     * Notificaciones (Web Push) para el panel.
+     *
+     * Las claves VAPID identifican al servidor ante los servicios de push de Google, Apple y
+     * Mozilla. Se generan una vez con `bin/cake push claves` y van en config/app_local.php
+     * (o en variables de entorno): si cambian, cada dispositivo tiene que volver a activar
+     * los avisos. Sin claves, el panel dice que faltan y no se envía nada.
+     *
+     * - subject: dirección del sitio (o un mailto:) por si un servicio de push necesita contactar.
+     */
+    'Push' => [
+        'publicKey' => env('PUSH_PUBLIC_KEY', null),
+        'privateKey' => env('PUSH_PRIVATE_KEY', null),
+        'subject' => env('PUSH_SUBJECT', 'https://nails-ivonne.vercel.app'),
+    ],
+
     'Sitio' => [
         'nombre' => 'Nails Ivonne',
         'shell' => env('SITIO_SHELL', dirname(ROOT) . DS . 'index.csr.html'),

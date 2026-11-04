@@ -9,6 +9,7 @@ use App\Model\Table\AjustesTable;
 use App\Model\Table\BloqueosTable;
 use App\Model\Table\CitasTable;
 use App\Model\Table\TrabajosTable;
+use App\Push\Notificador;
 use Cake\Cache\Cache;
 use Cake\Database\Exception\QueryException;
 use Cake\Http\Exception\BadRequestException;
@@ -148,8 +149,39 @@ class AgendaController extends AppController
         }
 
         Cache::write($clave, (int)Cache::read($clave, 'citas') + 1, 'citas');
+        $this->avisarAIvonne($cita);
         $this->response = $this->response->withStatus(201);
         $this->json(['cita' => $cita->aPublico()]);
+    }
+
+    /**
+     * Notificación a los dispositivos del panel. Si falla, la cita ya quedó guardada igual.
+     *
+     * @param \App\Model\Entity\Cita $cita Cita recién apartada.
+     * @return void
+     */
+    private function avisarAIvonne(Cita $cita): void
+    {
+        $fecha = $cita->fecha->format('Y-m-d');
+        $disenos = count($cita->trabajos ?? []);
+        $cuerpo = sprintf(
+            '%s · %s, %s',
+            $cita->nombre,
+            Agenda::formatoDia($fecha),
+            Agenda::formatoHora($cita->hora->format('H:i')),
+        );
+        if ($disenos > 0) {
+            $cuerpo .= $disenos === 1 ? ' · 1 diseño' : " · {$disenos} diseños";
+        }
+
+        /** @var \App\Model\Table\PushSuscripcionesTable $suscripciones */
+        $suscripciones = $this->fetchTable('PushSuscripciones');
+        Notificador::desdeConfig($suscripciones)->aTodos(Notificador::notificacion(
+            'Nueva cita por confirmar',
+            $cuerpo,
+            '/admin?semana=' . $fecha,
+            'cita-' . $cita->id,
+        ));
     }
 
     /**

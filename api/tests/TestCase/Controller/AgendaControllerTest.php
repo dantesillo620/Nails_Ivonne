@@ -20,6 +20,8 @@ class AgendaControllerTest extends TestCase
         'app.CitasTrabajos',
         'app.Bloqueos',
         'app.Ajustes',
+        'app.Usuarios',
+        'app.PushSuscripciones',
     ];
 
     protected function setUp(): void

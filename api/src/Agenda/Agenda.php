@@ -144,6 +144,40 @@ class Agenda
     }
 
     /**
+     * 'jueves 5 de noviembre', como formatoDia() del sitio.
+     *
+     * @param string $fecha 'AAAA-MM-DD'.
+     * @return string
+     */
+    public static function formatoDia(string $fecha): string
+    {
+        $dias = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+        $meses = [
+            'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+            'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
+        ];
+        $d = new DateTimeImmutable($fecha);
+
+        $mes = $meses[(int)$d->format('n') - 1];
+
+        return sprintf('%s %d de %s', $dias[(int)$d->format('w')], (int)$d->format('j'), $mes);
+    }
+
+    /**
+     * '16:00' -> '4:00 p. m.', como formatoHora() del sitio.
+     *
+     * @param string $hora 'HH:MM'.
+     * @return string
+     */
+    public static function formatoHora(string $hora): string
+    {
+        $total = self::minutos($hora);
+        $h = intdiv($total, 60);
+
+        return sprintf('%d:%02d %s', $h % 12 ?: 12, $total % 60, $h < 12 ? 'a. m.' : 'p. m.');
+    }
+
+    /**
      * @param string $hora 'HH:MM'.
      * @return int
      */
