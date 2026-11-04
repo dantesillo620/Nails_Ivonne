@@ -33,7 +33,7 @@ export interface SiteConfig {
   contacto: {
     /**
      * WhatsApp en formato internacional, solo dígitos y sin '+':
-     * código de país + número. México: '52' + 10 dígitos, p. ej. '525512345678'.
+     * código de país + número. EE. UU.: '1' + 10 dígitos, p. ej. '13855221123'; México: '52' + 10 dígitos.
      */
     whatsapp: string;
     /** Usuario de Instagram sin '@', p. ej. 'nails.ivonne'. */
@@ -88,7 +88,7 @@ export const SITE: SiteConfig = {
   defaultImage: '/brand/og-nails-ivonne.jpg',
 
   contacto: {
-    whatsapp: '523855221123',
+    whatsapp: '13855221123',
     instagram: '', // TODO
     direccion: {
       calle: '', // TODO

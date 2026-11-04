@@ -21,7 +21,7 @@ hosting (Hostinger, Apache).
 
 Todo está en **`src/app/core/site.config.ts`**:
 
-- `contacto.whatsapp`: número internacional, solo dígitos (México: `52` + 10 dígitos).
+- `contacto.whatsapp`: número internacional, solo dígitos (EE. UU.: `1` + 10 dígitos; México: `52` + 10 dígitos).
   Mientras esté vacío no se muestra ningún enlace de WhatsApp.
 - `contacto.instagram`: usuario sin `@`.
 - `contacto.direccion`, `contacto.mapsUrl`, `contacto.horarios`: se muestran solo si se llenan.
