@@ -34,6 +34,10 @@ RewriteRule ^(.+)$ $1/index.html [L]
 # con su título y su foto en las meta tags, para la vista previa de WhatsApp y Google.
 RewriteRule ^disenos/([A-Za-z0-9-]+)$ api/disenos/$1 [L]
 
+# El panel lleva su propio HTML (manifest e ícono del panel) para que iOS lo instale
+# como app aparte que abre en /admin. Lo genera scripts/panel-html.mjs.
+RewriteRule ^admin(/.*)?$ panel.html [L]
+
 # Cualquier otra ruta inexistente -> la app Angular (muestra la página 404)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

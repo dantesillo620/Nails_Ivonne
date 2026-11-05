@@ -3,5 +3,9 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist/nails-ivonne/browser",
   "trailingSlash": false,
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.csr.html" }]
+  "rewrites": [
+    { "source": "/admin", "destination": "/panel.html" },
+    { "source": "/admin/(.*)", "destination": "/panel.html" },
+    { "source": "/(.*)", "destination": "/index.csr.html" }
+  ]
 }
